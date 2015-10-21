@@ -16,6 +16,6 @@ typedef struct node {
 
 node_t* make_node (int* tup, int n);
 int* end_tuple (SequenceList in);
-void gen_succ(JRB g, SequenceList in, node_t *root);
+void gen_succ(JRB g, SequenceList list, node_t *root);
 
 #endif

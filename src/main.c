@@ -19,7 +19,7 @@ int main(int argc, char **argv) {
 
   begin = clock();
 
-  printf("%s\n", scs_mmerge(list, alphabet));
+  printf("%s\n", scs_lsearch(list, alphabet));
  
   end = clock();
 

@@ -10,5 +10,6 @@ char* scs_mmerge(SequenceList list, char* alphabet);
 char* scs_greedy(SequenceList list, char* alphabet);
 char* scs_graph(SequenceList list, char* alphabet);
 char* scs_reduce_expand(SequenceList list, char* alphabet);
+char* scs_lsearch(SequenceList list, char* alphabet);
 
 #endif
