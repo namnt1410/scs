@@ -3,8 +3,8 @@
 #include <string.h>
 
 #include "scs.h"
-#include "mmerge.h"
-#include "heuristics.h"
+#include "mmerge/mmerge.h"
+#include "mmerge/heuristics.h"
 
 int def_majority(char **seq, int n, char *alphabet, int *count, int **index, int *wsum) {
   int i;

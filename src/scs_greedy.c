@@ -3,7 +3,7 @@
 #include <string.h>
 
 #include "scs.h"
-#include "pair.h"
+#include "pair/pair.h"
 
 char* scs_greedy(SequenceList list, char* alphabet) {
   Sequence *node;
