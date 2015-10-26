@@ -3,10 +3,14 @@
 
 #include "sequence.h"
 
+typedef struct SolutionNode SolutionNode;
+typedef struct Solution Solution;
+
 typedef struct SolutionNode {
   int seqno;
   int index;
   Sequence *seq;
+  Solution *sol;
   struct SolutionNode *left_nbr, *right_nbr;
   struct SolutionNode *prev, *next;
 } SolutionNode;

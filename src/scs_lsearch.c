@@ -11,8 +11,10 @@ char *scs_lsearch (SequenceList list, char *alphabet) {
 
   sol = lsearch(list); 
   seq = (char*) malloc (sol->sol_len * sizeof(char));
-  ls_evaluate (sol, seq);
+  // ls_evaluate (sol, NULL);
+  int val = ls_evaluate (sol, seq);
 
+  printf("val: %d\n", val);
   printf("check: %d\n", check_common_supersequence(list, seq));
 
   return seq;
