@@ -19,13 +19,23 @@ int main(int argc, char **argv) {
 
   begin = clock();
 
-  printf("%s\n", scs_lsearch(list, alphabet));
+  printf("%s\n", scs_reduce_expand(list, alphabet));
  
   end = clock();
 
   time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
 
   printf("Elapsed time: %lf ms\n", time_spent * 1000);
+
+  /*begin = clock();
+
+  printf("%s\n", scs_lsearch(list, alphabet));
+ 
+  end = clock();
+
+  time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
+
+  printf("Elapsed time: %lf ms\n", time_spent * 1000);*/
 
   return 0;
 }

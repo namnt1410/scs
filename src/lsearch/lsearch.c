@@ -80,53 +80,61 @@ Solution *lsearch (SequenceList list) {
   SolutionNode *node;
   Sequence *seq;
   char *super;
-  int val, min, best;
+  int val, min, best, better;
   int offsetmin, offsetmax;
   int offset, best_offset;
-  int i, count, seqno;  
+  int i, count, seqno, m = 0;  
 
   sol = ls_init(list);
   super = (char*) malloc (sol->sol_len * sizeof(char));
   best = ls_evaluate(sol, super);
 
-  i = 0;
   do {
-    seq = list;
-    count = 0; seqno = 0;
-    min = best; best_offset = 0;
-    while(seq) {
-      if(i < seq->len) {
-        count++;
-        node = sol->node_tbl[seqno][i];
-        ls_neighborhood (node, &offsetmin, &offsetmax);
-        offset = offsetmin;
-        while (offset <= offsetmax) {
-          if (offset != 0 && ls_shift (node, offset)) {
-            val = ls_evaluate (sol, super);
+    better = 0;
+    i = 0;
+    do {
+      seq = list;
+      count = 0; seqno = 0;
+      while(seq) {
+        min = best; best_offset = 0;
+	if(i < seq->len) {
+	  count++;
+	  node = sol->node_tbl[seqno][i];
+	  ls_neighborhood (node, &offsetmin, &offsetmax);
+	  offset = offsetmin;
+          //printf("offset: %d %d\n", offsetmin, offsetmax);
+	  while (offset <= offsetmax) {
+	    if (offset != 0 && ls_shift (node, offset)) {
+	      val = ls_evaluate (sol, super);
 
-            if (val < min) {
-              min = val;
-              best_offset = offset;
-            }
+              //printf("val: %d\n", val);
+
+	      if (val < min) {
+		min = val;
+		best_offset = offset;
+	      }
             
-            ls_shift (node, -offset);
-          }
-          offset++;
-        }
+	      ls_shift (node, -offset);
+	    }
+	    offset++;
+	  }
 
-        if (min < best) {
-          ls_shift (node, best_offset);
-          best = ls_evaluate (sol, super);
-          if (!node->prev) sol->first = node;
-          if (!node->next) sol->last = node; 
-        }
-      }
+	  if (min < best) {
+	    ls_shift (node, best_offset);
+	    best = ls_evaluate (sol, super);
+            better = 1;
+	  }
+	}
  
-      seq = seq->next; seqno++;
-    } 
+	seq = seq->next; seqno++;
+      } 
 
-    i++;
-  } while (count);
+      i++;
+    } while (count);
+    m++;
+  } while (better);
+
+  printf("loop: %d\n", m);
 
   return sol;
 }

@@ -4,7 +4,7 @@
 
 #include "mmerge.h"
 
-#define MAX_LEN 1000
+#define MAX_LEN 1000000
 
 char* mmerge(char **seq, int n, char *alphabet, int (*majority)(char **, int, char *, int *, int **, int *)) {
   int count[strlen(alphabet)];
@@ -50,6 +50,8 @@ char* mmerge(char **seq, int n, char *alphabet, int (*majority)(char **, int, ch
   }
 
   out[len] = '\0';
+
+  printf("val: %d\n", len);
      
   return out;
 }

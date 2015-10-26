@@ -68,18 +68,25 @@ char *expand(SequenceList *rlist, int m, char *aux_seq) {
   SequenceBlock block;
   
   block = convert(aux_seq);
+  printf("3333\n");
   for(i = 1; i <= m; i++) {
+  printf("4444\n");
     bnode = block;
     while(bnode) {
       bnode->len *= 2;
       bnode =  bnode->next;
     }
+  printf("6666\n");
     bnode = block;
+  printf("7777\n");
     while(bnode) {
+  printf("9999\n");
       while(check_common_supersequence(rlist[i], revert(block)) && bnode->len >= 0)
         bnode->len--;
       bnode->len++; bnode = bnode->next;
+  printf("8888\n");
     }
+  printf("5555\n");
   }
 
   return revert(block);
@@ -89,9 +96,13 @@ char* scs_reduce_expand(SequenceList list, char* alphabet) {
   int m;
   char *aux_seq;
   SequenceList *rlist;
+ 
+  printf("1111\n");
 
   rlist = reduce(list, &m);
   aux_seq = strdup(scs_greedy(rlist[0], alphabet));
+ 
+  printf("2222\n");
 
   return expand(rlist, m, aux_seq);
 }

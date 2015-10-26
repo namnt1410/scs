@@ -19,7 +19,9 @@ char* scs_greedy(SequenceList list, char* alphabet) {
 
   seq = (char**)malloc(n * sizeof(char*));
   len = (int**)malloc(n * sizeof(int*));
-  for(i = 0; i < n; i++) len[i] = (int*)malloc(n * sizeof(int));
+  for(i = 0; i < n; i++) len[i] = (int*)malloc(n * sizeof(int)); 
+
+  printf("111111\n");
 
   i = 0; node = list;
   while(node) {
