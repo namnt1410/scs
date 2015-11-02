@@ -58,7 +58,5 @@ char* scs_graph(SequenceList list, char* alphabet) {
     cur = prev ;
   }
 
-  free(tup);
-
   return out;
 }

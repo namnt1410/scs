@@ -30,9 +30,10 @@ char* scs_mmerge(SequenceList list, char* alphabet) {
 
   node = list; i = 0; 
   while(node) {
-    seq[i++] = strdup(node->seq);
-    node = node->next;
+    seq[i] = (char*) malloc (MAX_LEN * sizeof(char)); 
+    strcpy(seq[i], node->seq);
+    node = node->next; i++;
   }
 
-  return mmerge(seq, n, alphabet, def_majority);
+  return mmerge(seq, n, alphabet, heuristics_majority_H3);
 }

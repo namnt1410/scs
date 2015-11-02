@@ -73,6 +73,17 @@ Sequence *add_sequence(SequenceList *list, char *seq) {
   return new_seq;  
 }
 
+void free_list(SequenceList *list) {
+  Sequence *seq;
+
+  seq = *list;
+  while (seq) {
+    (*list) = (*list)->next;
+    free(seq);
+    seq = (*list);
+  }
+} 
+
 int get_size(SequenceList list) {
   Sequence *node = list;
   int len = 0;
@@ -83,16 +94,4 @@ int get_size(SequenceList list) {
   }
 
   return len;
-}
-
-char *pop(SequenceList *list) {
-  if((*list) == NULL) return NULL;
-  
-  char *seq = strdup((*list)->seq);
-
-  Sequence *tmp = *list; 
-  *list = (*list)->next;
-  free(tmp); 
-
-  return seq;
 }

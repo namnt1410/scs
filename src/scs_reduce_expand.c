@@ -51,13 +51,14 @@ SequenceList *reduce(SequenceList list, int *m) {
   rlist = (SequenceList*)malloc((*m + 1) * sizeof(SequenceList));
   rlist[*m] = revert_sequencelist(blist, n); 
 
-  half = (SequenceBlock*)malloc(n * sizeof(SequenceBlock));
-  memcpy(half, blist, n * sizeof(SequenceBlock));
+  half = blist; 
 
-  for(i = *m - 1; i >= 0; i--) {
+  for(i = *m; i >= 1; i--) {
     for(j = 0; j < n ; j++) half[j] = half_reduce(half[j]);
-    rlist[i] = revert_sequencelist(half, n);
+    rlist[i - 1] = revert_sequencelist(half, n);
   } 
+
+  free(half);
    
   return rlist;
 }
@@ -86,12 +87,18 @@ char *expand(SequenceList *rlist, int m, char *aux_seq) {
 } 
 
 char* scs_reduce_expand(SequenceList list, char* alphabet) {
-  int m;
-  char *aux_seq;
+  int i, m;
+  char *out;
+  char aux_seq[MAX_LEN];
   SequenceList *rlist;
 
   rlist = reduce(list, &m);
-  aux_seq = strdup(scs_greedy(rlist[0], alphabet));
+  strcpy(aux_seq, scs_greedy(rlist[0], alphabet));
 
-  return expand(rlist, m, aux_seq);
+  out = expand(rlist, m, aux_seq);
+
+  for (i = 0; i <= m; i++) free_list(&rlist[i]);
+  free(rlist); 
+
+  return out;
 }

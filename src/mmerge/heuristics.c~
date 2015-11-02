@@ -5,7 +5,7 @@
 #include "heuristics.h"
 #include "mmerge.h"
 
-#define MAX_LEN 1000
+#define MAX_LEN 100000
 
 int heuristics_majority_H1(char **seq, int n, char *alphabet, int *count, int **index, int *wsum) {
   int i;
@@ -59,19 +59,32 @@ int heuristics_majority_H3(char **seq, int n, char *alphabet, int *count, int **
   int super_len[alpha_len], minlen = MAX_LEN;
   int max = -1, maxval = -1;
 
+  printf("11111\n");
+
   child_seq = (char**)malloc(n * sizeof(char*));
   for(i = 0; i < n; i++) child_seq[i] = (char*)malloc(MAX_LEN * sizeof(char));
   super = (char*)malloc(MAX_LEN * sizeof(char));
 
+  printf("22222\n");
+
   for(i = 0; i < alpha_len; i++) {
+
+  printf("55555\n");
     if(!count[i]) continue;
     for(j = 0; j < n; j++) strcpy(child_seq[j], seq[j]);
     for(j = 0; j < count[i]; j++) ++child_seq[index[i][j]];
 
+  printf("66666\n");
     strcpy(super, mmerge(child_seq, n, alphabet, heuristics_majority_H1));
+
+  printf("88888\n");
     super_len[i] = strlen(super);
     if(super_len[i] < minlen) minlen = super_len[i];
+
+  printf("77777\n");
   }
+
+  printf("33333\n");
 
   for(i = 0; i < alpha_len; i++) {
     if(!count[i] || super_len[i] > minlen) continue;
@@ -86,6 +99,8 @@ int heuristics_majority_H3(char **seq, int n, char *alphabet, int *count, int **
       max = super_len[i]; maxval = i;
     }
   }
+
+  printf("44444\n");
  
   return maxval;
 }

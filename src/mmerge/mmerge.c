@@ -12,12 +12,12 @@ char* mmerge(char **seq, int n, char *alphabet, int (*majority)(char **, int, ch
   int wsum[strlen(alphabet)];
   int i, j, k, m; 
   int nextval;
-  int len = 0;
+  unsigned int len = 0;
   char ch;
   char *out;
 
   out = malloc(MAX_LEN * sizeof(char));
-  for(i = 0; i < sizeof(alphabet); i++) index[i] = (int*)malloc(n * sizeof(int));
+  for(i = 0; i < strlen(alphabet); i++) index[i] = (int*)malloc(n * sizeof(int));
   memset(count, 0, sizeof(count));
   memset(wsum, 0, sizeof(wsum));
 
@@ -33,7 +33,6 @@ char* mmerge(char **seq, int n, char *alphabet, int (*majority)(char **, int, ch
   while(1) {
     nextval = majority(seq, n, alphabet, count, index, wsum);
     if(nextval == -1) break;
-
     out[len++] = alphabet[nextval];
     m = count[nextval]; 
 

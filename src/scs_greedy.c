@@ -7,13 +7,14 @@
 
 char* scs_greedy(SequenceList list, char* alphabet) {
   Sequence *node;
-  char **seq;
-  int **len;
-  char tmp[MAX_SEQUENCE_LEN];
+  char** seq;
+  char *out;
+  int** len;
+  char tmp[MAX_LEN];
   int i, j;
   int n;
   int min, ix, iy;
-  char x[MAX_SEQUENCE_LEN], y[MAX_SEQUENCE_LEN];
+  char x[MAX_LEN], y[MAX_LEN];
   
   n = get_size(list);
 
@@ -23,15 +24,18 @@ char* scs_greedy(SequenceList list, char* alphabet) {
 
   i = 0; node = list;
   while(node) {
-    seq[i++] = strdup(node->seq); 
-    node = node->next;
+    seq[i] = (char*) malloc (MAX_LEN * sizeof(char)); 
+    strcpy(seq[i], node->seq); 
+    node = node->next; i++;
   }
 
   for(i = 0; i < n; i++)
-    for(j = 0; j < i; j++) len[i][j] = scs_pair(seq[i], seq[j], tmp);
+    for(j = 0; j < i; j++) {
+      len[i][j] = scs_pair(seq[i], seq[j], tmp);
+    }
     
   while(n > 1) { 
-    min = MAX_SEQUENCE_LEN;
+    min = MAX_LEN;
     for(i = 0; i < n; i++)
       for(j = 0; j < i; j++) {  
         if(len[i][j] < min) {
@@ -62,5 +66,15 @@ char* scs_greedy(SequenceList list, char* alphabet) {
     n--;
   }
 
-  return seq[0];
+  out = strdup(seq[0]); 
+
+  for(i = 0; i < get_size(list); i++) {
+    free(seq[i]);
+    free(len[i]);
+  }
+
+  free(seq); 
+  free(len); 
+
+  return out;
 }

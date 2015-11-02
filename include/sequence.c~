@@ -29,7 +29,7 @@ int check_common_supersequence(SequenceList list, char *super) {
   Sequence *seq;
 
   seq = list;
-  while(node) {
+  while(seq) {
     if(!check_supersequence(seq->seq, super)) return 0;
     seq =  seq->next;
   }
@@ -72,6 +72,17 @@ Sequence *add_sequence(SequenceList *list, char *seq) {
 
   return new_seq;  
 }
+
+void free_list(SequenceList *list) {
+  Sequence *seq;
+
+  seq = *list;
+  while (seq) {
+    (*list) = (*list)->next;
+    free(seq);
+    seq = (*list);
+  }
+} 
 
 int get_size(SequenceList list) {
   Sequence *node = list;

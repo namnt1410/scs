@@ -3,7 +3,7 @@
 
 #include "sequence.h"
 
-#define MAX_SEQUENCE_LEN 	1000000
+#define MAX_LEN 	10000
 
 char* scs_alpha(SequenceList list, char* alphabet);
 char* scs_mmerge(SequenceList list, char* alphabet);

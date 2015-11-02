@@ -134,7 +134,8 @@ Solution *lsearch (SequenceList list) {
     m++;
   } while (better);
 
-  printf("loop: %d\n", m);
+  // printf("loop: %d\n", m);
+  free(super);
 
   return sol;
 }
