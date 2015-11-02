@@ -12,4 +12,5 @@ scs: $(OBJS)
 	$(CC) $(CFLAGS) -o scs $(SCS_SOURCEFILES) $(OBJS) $(LIBS) $(INCLUDES)
 
 clean:
+	find . -type f -name "*~" -delete
 	rm -rf *~ scs
