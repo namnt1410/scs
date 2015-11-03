@@ -19,7 +19,7 @@ char* scs_graph(SequenceList list, char* alphabet) {
   Dllist dnode, queue;
   JRB bnode;
   
-  out = malloc(MAX_LEN * sizeof(char));
+  out = malloc((MAX_LEN + 1) * sizeof(char));
   n = get_size(list);
   tup = (int*)malloc(n * sizeof(int));
   memset(tup, 0, n * sizeof(int));

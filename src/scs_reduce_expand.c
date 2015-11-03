@@ -89,7 +89,7 @@ char *expand(SequenceList *rlist, int m, char *aux_seq) {
 char* scs_reduce_expand(SequenceList list, char* alphabet) {
   int i, m;
   char *out;
-  char aux_seq[MAX_LEN];
+  char aux_seq[MAX_LEN + 1];
   SequenceList *rlist;
 
   rlist = reduce(list, &m);

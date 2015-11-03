@@ -40,8 +40,10 @@ int check_common_supersequence(SequenceList list, char *super) {
 Sequence *create_sequence(char *seq) {
   Sequence *new = (Sequence*)malloc(sizeof(Sequence));
 
-  new->seq = strdup(seq);
   new->len = strlen(seq);
+  new->seq = (char*) malloc ((new->len + 1) * sizeof(char));
+  strcpy(new->seq, seq);
+
   new->next = NULL;
 
   return new;

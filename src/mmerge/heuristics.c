@@ -5,7 +5,7 @@
 #include "heuristics.h"
 #include "mmerge.h"
 
-#define MAX_LEN 100000
+#define MAX_LEN 10000
 
 int heuristics_majority_H1(char **seq, int n, char *alphabet, int *count, int **index, int *wsum) {
   int i;
@@ -52,16 +52,16 @@ int heuristics_majority_H2(char **seq, int n, char *alphabet, int *count, int **
 }
 
 int heuristics_majority_H3(char **seq, int n, char *alphabet, int *count, int **index, int *wsum) {
-  char *super;
-  char **child_seq;
+  char* super;
+  char** child_seq;
   int i, j, idx;
   int alpha_len = strlen(alphabet);
   int super_len[alpha_len], minlen = MAX_LEN;
   int max = -1, maxval = -1;
 
   child_seq = (char**)malloc(n * sizeof(char*));
-  for(i = 0; i < n; i++) child_seq[i] = (char*)malloc(MAX_LEN * sizeof(char));
-  super = (char*)malloc(MAX_LEN * sizeof(char));
+  for(i = 0; i < n; i++) child_seq[i] = (char*)malloc((MAX_LEN + 1) * sizeof(char));
+  super = (char*)malloc((MAX_LEN + 1) * sizeof(char));
 
   for(i = 0; i < alpha_len; i++) {
     if(!count[i]) continue;

@@ -5,7 +5,7 @@
 
 #include "block.h"
 
-#define MAX_LEN		100000
+#define MAX_LEN		10000
 
 Block *make_block(char letter) {
   Block *new;

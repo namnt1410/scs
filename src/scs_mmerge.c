@@ -21,6 +21,7 @@ int def_majority(char **seq, int n, char *alphabet, int *count, int **index, int
 char* scs_mmerge(SequenceList list, char* alphabet) {
   Sequence *node;
   char **seq;
+  char *out;
   int n; 
   int i; 
 
@@ -30,10 +31,12 @@ char* scs_mmerge(SequenceList list, char* alphabet) {
 
   node = list; i = 0; 
   while(node) {
-    seq[i] = (char*) malloc (MAX_LEN * sizeof(char)); 
+    seq[i] = (char*) malloc ((node->len + 1) * sizeof(char)); 
     strcpy(seq[i], node->seq);
     node = node->next; i++;
   }
 
-  return mmerge(seq, n, alphabet, def_majority);
+  out = mmerge(seq, n, alphabet, def_majority);
+
+  return out;
 }

@@ -10,11 +10,11 @@ char* scs_greedy(SequenceList list, char* alphabet) {
   char** seq;
   char *out;
   int** len;
-  char tmp[MAX_LEN];
+  char tmp[MAX_LEN + 1];
   int i, j;
   int n;
   int min, ix, iy;
-  char x[MAX_LEN], y[MAX_LEN];
+  char x[MAX_LEN + 1], y[MAX_LEN + 1];
   
   n = get_size(list);
 

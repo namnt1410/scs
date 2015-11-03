@@ -4,22 +4,31 @@
 
 #include "mmerge.h"
 
-#define MAX_LEN 1000000
+#define MAX_LEN 10000
 
 char* mmerge(char **seq, int n, char *alphabet, int (*majority)(char **, int, char *, int *, int **, int *)) {
-  int count[strlen(alphabet)];
-  int *index[strlen(alphabet)];
-  int wsum[strlen(alphabet)];
+  int alpha_len;
+  int* count;
+  int** index;
+  int* wsum;
   int i, j, k, m; 
   int nextval;
   unsigned int len = 0;
   char ch;
   char *out;
 
-  out = malloc(MAX_LEN * sizeof(char));
-  for(i = 0; i < strlen(alphabet); i++) index[i] = (int*)malloc(n * sizeof(int));
-  memset(count, 0, sizeof(count));
-  memset(wsum, 0, sizeof(wsum));
+  alpha_len = strlen(alphabet);
+
+  index = (int**) malloc (alpha_len * sizeof(int*));
+  for(i = 0; i < alpha_len; i++) index[i] = (int*)malloc(n * sizeof(int));
+
+  count = (int*) malloc (alpha_len * sizeof(int));
+  memset(count, 0, alpha_len * sizeof(int));
+
+  wsum = (int*) malloc (alpha_len * sizeof(int));
+  memset(wsum, 0, alpha_len * sizeof(int));
+
+  out = malloc((MAX_LEN + 1) * sizeof(char));
 
   for(i = 0; i < n; i++) {
     if(seq[i][0]) {
