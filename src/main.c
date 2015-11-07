@@ -7,16 +7,27 @@
 #include "scs.h"
 
 int main(int argc, char **argv) {
-  /*if (argc <= 1) {
-    printf("scs: no input file.\n");
+  if (argc <= 2) {
+    printf("scs: invalid input data.\n");
     return -1;
-  }*/
+  }
 
   SequenceList list;
   char alphabet[1000];
   int i;
+  int arg_size, arg_min, arg_max, arg_alpha;
 
-  list = gensequences(75, 10, 10, 100, alphabet);
+  if (strcmp(argv[1], "r") == 0) {
+    list = readsequences(argv[2], alphabet);
+  } else if (strcmp(argv[1], "g") == 0 && argc >= 6) {
+    arg_size = atoi(argv[2]); arg_min = atoi(argv[3]);
+    arg_max = atoi(argv[4]); arg_alpha = atoi(argv[5]); 
+
+    list = gensequences(arg_size, arg_min, arg_max, arg_alpha, alphabet);
+  } else {
+    printf("scs: invalid argument.\n");
+    return -1;
+  }
 
   clock_t begin, end;
   double time_spent;
