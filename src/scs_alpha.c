@@ -4,20 +4,18 @@
 
 #include "scs.h"
 
-char* scs_alpha(SequenceList list, char* alphabet) {
-  char *out;
-  int i, len = 0;
-  Sequence *p = list;
+int scs_alpha(SequenceList list, int *alphabet, int alpha_len, int *super) {
+  int i, max_len = 0;
+  Sequence *seq;
 
-  while(p != NULL) {
-    if(p->len > len) len = p->len;
-    p = p->next;
+  seq = list;
+  while(seq != NULL) {
+    if(seq->len > max_len) max_len = seq->len;
+    seq = seq->next;
   }
 
-  out = strdup("");
-  for(i = 0; i < len; i++) 
-    strcat(out, alphabet);
+  for(i = 0; i < max_len; i++) memcpy (super + i * alpha_len, alphabet, alpha_len * sizeof(int)); 
 
-  return out;
+  return (max_len * alpha_len);
 }
 

@@ -7,7 +7,7 @@
 
 #include "input.h"
 
-SequenceList readsequences (char* filename, char *alphabet) {
+/*SequenceList readsequences (char* filename, int *alphabet, int *alpha_len) {
   SequenceList list;
   IS is ;
 
@@ -31,24 +31,21 @@ SequenceList readsequences (char* filename, char *alphabet) {
   jettison_inputstruct (is);
 
   return list;
-}
+}*/
 
-SequenceList gensequences (int size, int min_len, int max_len, int alpha_len, char *alphabet) {
+SequenceList gensequences (int size, int min_len, int max_len, int alpha_len, int *alphabet) {
   SequenceList list;
-  char *seq;
+  int *seq;
   int i, j, len;
   time_t t;
 
   srand((unsigned) time(&t));
   printf("rand: %d\n", (rand() % 100));
 
-  //alphabet = (char*) malloc (alpha_len * sizeof(char));
-  seq = (char*) malloc (max_len * sizeof(char));
+  //alphabet = (int*) malloc (alpha_len * sizeof(char));
+  seq = (int*) malloc (max_len * sizeof(int));
 
-  for (i = 0; i < alpha_len; i++) alphabet[i] = i + 1;
-  alphabet[alpha_len] = '\0';
-
-  printf("alpha_len: %d\n", strlen(alphabet));
+  for (i = 0; i < alpha_len; i++) alphabet[i] = i;
 
   list = NULL;
 
@@ -56,10 +53,9 @@ SequenceList gensequences (int size, int min_len, int max_len, int alpha_len, ch
     if (min_len == max_len) len = min_len;
     else len = min_len + (rand() % ((max_len - min_len) + 1));
 
-    for (j = 0; j < len; j++) 
-      seq[j] = alphabet[(rand() % alpha_len)];
-    seq[len] = '\0'; 
-    add_sequence(&list, seq);
+    for (j = 0; j < len; j++) seq[j] = alphabet[(rand() % alpha_len)];
+     
+    add_sequence(&list, seq, len);
   }
 
   return list;

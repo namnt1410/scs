@@ -8,17 +8,20 @@
 
 int main(int argc, char **argv) {
   SequenceList list;
-  char alphabet[1000];
+  int alphabet[1000];
   int i;
-  int arg_size, arg_min, arg_max, arg_alpha;
+  int arg_size, arg_min, arg_max, alpha_len;
+  int super[1000];
+  int len;
 
   if (strcmp(argv[1], "r") == 0 && argc >= 3) {
-    list = readsequences(argv[2], alphabet);
+    //list = readsequences(argv[2], alphabet);
+    list = gensequences(10, 5, 5, 10, alphabet);
   } else if (strcmp(argv[1], "g") == 0 && argc >= 6) {
     arg_size = atoi(argv[2]); arg_min = atoi(argv[3]);
-    arg_max = atoi(argv[4]); arg_alpha = atoi(argv[5]); 
+    arg_max = atoi(argv[4]); alpha_len = atoi(argv[5]); 
 
-    list = gensequences(arg_size, arg_min, arg_max, arg_alpha, alphabet);
+    list = gensequences(arg_size, arg_min, arg_max, alpha_len, alphabet);
   } else {
     printf("scs: invalid argument.\n");
     return -1;
@@ -29,7 +32,10 @@ int main(int argc, char **argv) {
 
   begin = clock();
 
-  printf("lsearch: %d\n", strlen(scs_lsearch(list, alphabet)));
+  len = scs_greedy(list, super);
+  printf("greedy: %d %d\n", len, check_common_supersequence(list, super, len));
+  for (i = 0; i < len; i++) printf("%d ", super[i]);
+  printf("\n");  
  
   end = clock();
 
@@ -37,7 +43,7 @@ int main(int argc, char **argv) {
 
   printf("Elapsed time: %lf ms\n", time_spent * 1000);
 
-  begin = clock();
+  /* begin = clock();
 
   printf("mmerge: %d\n", strlen(scs_mmerge(list, alphabet)));
  
@@ -65,7 +71,7 @@ int main(int argc, char **argv) {
 
   time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
 
-  printf("Elapsed time: %lf ms\n", time_spent * 1000);
+  printf("Elapsed time: %lf ms\n", time_spent * 1000);*/
 
   free_list(&list);
 

@@ -2,15 +2,15 @@
 #define __BLOCK_H__
 
 typedef struct block_t {
-  char letter;
+  int sym;
   int len;
   struct block_t *next;
 } Block;
 
 typedef struct block_t *SequenceBlock; 
 
-SequenceBlock convert(char *seq);
-char *revert(SequenceBlock block);
+SequenceBlock convert(int *seq, int len);
+int *revert(SequenceBlock block, int *len);
 Block *half_reduce(SequenceBlock block);
 int run(SequenceBlock block);
 

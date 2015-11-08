@@ -36,7 +36,7 @@ int* end_tuple (SequenceList list) {
 
   node = list;
   while(node) {
-    tup[i++] = strlen(node->seq);
+    tup[i++] = node->len;
     node =  node->next;
   }
 
@@ -48,7 +48,7 @@ void gen_succ(JRB g, SequenceList list, node_t* root) {
   node_t *p, *tmp;
   int n;
   int i = 0;
-  char ch;
+  int sym;
   JRB b;
 
   n = get_size(list);
@@ -64,11 +64,11 @@ void gen_succ(JRB g, SequenceList list, node_t* root) {
   node = list;
   while(node) {
     if(root->tup[i] < node->len) {
-      ch = node->seq[root->tup[i]];
-      bnode = jrb_find_int(table, ch); 
+      sym = node->seq[root->tup[i]];
+      bnode = jrb_find_int(table, sym); 
       if(bnode == NULL) {
         newlist = new_dllist();
-        jrb_insert_int(table, ch, new_jval_v(newlist));
+        jrb_insert_int(table, sym, new_jval_v(newlist));
       } else newlist = (Dllist)jval_v(bnode->val);
       dll_append(newlist, new_jval_i(i));
     }
@@ -76,7 +76,7 @@ void gen_succ(JRB g, SequenceList list, node_t* root) {
   }
 
   jrb_traverse(bnode, table) {
-    ch = jval_i(bnode->key);
+    sym = jval_i(bnode->key);
     newlist = (Dllist)jval_v(bnode->val);
 
     dll_traverse(rnode, newlist) {
@@ -88,7 +88,7 @@ void gen_succ(JRB g, SequenceList list, node_t* root) {
     if(b == NULL) p = make_node(tmp->tup, n);
     else p = (node_t*)jval_v(b->key);
 
-    jrb_insert_gen(root->succ, new_jval_v(p), new_jval_c(ch), ucomp); 
+    jrb_insert_gen(root->succ, new_jval_v(p), new_jval_i(sym), ucomp); 
     
     if(b == NULL) gen_succ(g, list, p);
     

@@ -3,10 +3,10 @@
 
 typedef struct link {
   int len;
-  char letter;
+  int sym;
   struct link* next;
 } link_t;
 
-int scs_pair(char* x, char* y, char* out);
+int scs_pair(int *seq1, int len1, int *seq2, int len2, int *super);
 
 #endif

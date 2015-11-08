@@ -3,18 +3,19 @@
 
 typedef struct Sequence_t {
   int len;
-  char *seq;
+  int *seq;
   struct Sequence_t *next;
 } Sequence;
 
 typedef struct Sequence_t *SequenceList;
 
-int check_sequence(char *seq, char *alphabet);
-int check_supersequence(char *seq, char *super);
-int check_common_supersequence(SequenceList list, char *super);
+int get_serial (int sym, int *alphabet, int alpha_len);
+int check_sequence(int *seq, int len, int *alphabet, int alpha_len);
+int check_supersequence(int *seq, int len, int *super, int super_len);
+int check_common_supersequence(SequenceList list, int *super, int super_len);
 
-Sequence* create_sequence(char *seq);
-Sequence* add_sequence(SequenceList *list, char *seq);
+Sequence *create_sequence(int *seq, int len);
+Sequence *add_sequence(SequenceList *list, int *seq, int len);
 int get_size(SequenceList list);
 void free_list(SequenceList *list);
 

@@ -5,76 +5,74 @@
 #include "scs.h"
 #include "pair/pair.h"
 
-char* scs_greedy(SequenceList list, char* alphabet) {
+int scs_greedy(SequenceList list, int *super) {
   Sequence *node;
-  char** seq;
-  char *out;
-  int** len;
-  char tmp[MAX_LEN + 1];
+  Sequence **seq;
+  Sequence *seq1, *seq2;
+
+  int **super_len, len;
+  int out[MAX_LEN];
   int i, j;
   int n;
   int min, ix, iy;
-  char x[MAX_LEN + 1], y[MAX_LEN + 1];
   
   n = get_size(list);
 
-  seq = (char**)malloc(n * sizeof(char*));
-  len = (int**)malloc(n * sizeof(int*));
-  for(i = 0; i < n; i++) len[i] = (int*)malloc(n * sizeof(int));
+  seq = (Sequence**)malloc(n * sizeof(Sequence*));
+  super_len = (int**)malloc(n * sizeof(int*));
+  for(i = 0; i < n; i++) super_len[i] = (int*)malloc(n * sizeof(int));
 
   i = 0; node = list;
   while(node) {
-    seq[i] = (char*) malloc (MAX_LEN * sizeof(char)); 
-    strcpy(seq[i], node->seq); 
-    node = node->next; i++;
+    seq[i++] = create_sequence(node->seq, node->len); 
+    node = node->next; 
   }
 
-  for(i = 0; i < n; i++)
-    for(j = 0; j < i; j++) {
-      len[i][j] = scs_pair(seq[i], seq[j], tmp);
-    }
+  for(i = 0; i < n; i++) 
+    for(j = 0; j < i; j++) super_len[i][j] = scs_pair(seq[i]->seq, seq[i]->len, seq[j]->seq, seq[j]->len, out);
     
   while(n > 1) { 
     min = MAX_LEN;
     for(i = 0; i < n; i++)
       for(j = 0; j < i; j++) {  
-        if(len[i][j] < min) {
-          min = len[i][j];
-          ix = j; iy = i;
+        if(super_len[i][j] < min) {
+          min = super_len[i][j];
+          ix = i; iy = j;
         }
       }
 
-    strcpy(x, seq[ix]); strcpy(y, seq[iy]);
+    seq1 = seq[ix]; seq2 = seq[iy];
 
     if(iy == n - 2) {
-      strcpy(seq[ix], seq[n - 1]);
-      for(i = 0; i < ix; i++) len[ix][i] = len[n - 1][i];
+      seq[ix] = seq[n - 1];
+      for(i = 0; i < ix; i++) super_len[ix][i] = super_len[n - 1][i];
     } else {
-      strcpy(seq[ix], seq[n - 2]); 
-      strcpy(seq[iy], seq[n - 1]);
-      for(i = 0; i < ix; i++) len[ix][i] = len[n - 2][i];
-      for(i = 0; i < iy; i++) len[iy][i] = len[n - 1][i];
+      seq[ix] = seq[n - 2]; 
+      seq[iy] = seq[n - 1];
+      for(i = 0; i < ix; i++) super_len[ix][i] = super_len[n - 2][i];
+      for(i = 0; i < iy; i++) super_len[iy][i] = super_len[n - 1][i];
     } 
 
-    scs_pair(x, y, tmp);
+    len = scs_pair(seq1->seq, seq1->len, seq2->seq, seq2->len, out);
 
-    strcpy(seq[n - 2], tmp);
+    seq[n - 2] = create_sequence(out, len);
 
     for(i = 0; i < n - 2; i++) 
-      len[n - 2][i] = scs_pair(seq[n - 2], seq[i], tmp);
+      super_len[n - 2][i] = scs_pair(seq[n - 2]->seq, seq[n - 2]->len, seq[i]->seq, seq[i]->len, out);
 
     n--;
-  }
+  } 
 
-  out = strdup(seq[0]); 
+  len = seq[0]->len;
+  memcpy(super, seq[0]->seq, len * sizeof(int));
 
-  for(i = 0; i < get_size(list); i++) {
+  /* for(i = 0; i < get_size(list); i++) {
     free(seq[i]);
-    free(len[i]);
+    free(super_len[i]);
   }
 
   free(seq); 
-  free(len); 
+  free(super_len);*/ 
 
-  return out;
+  return len;
 }

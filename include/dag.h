@@ -6,16 +6,16 @@
 #include "sequence.h"
 
 typedef struct node {
-  char letter;
-  int* tup;
+  int sym;
+  int *tup;
   int len;
   struct node* parent;
   JRB succ;
   int visited;
 } node_t;
 
-node_t* make_node (int* tup, int n);
-int* end_tuple (SequenceList in);
+node_t *make_node (int *tup, int n);
+int *end_tuple (SequenceList in);
 void gen_succ(JRB g, SequenceList list, node_t *root);
 
 #endif

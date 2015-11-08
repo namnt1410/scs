@@ -7,27 +7,25 @@
 
 #define MAX_LEN		10000
 
-Block *make_block(char letter) {
+Block *make_block(int sym) {
   Block *new;
 
   new = (Block*)malloc(sizeof(Block));
-  new->letter = letter;
+  new->sym = sym;
   new->len = 1;
   new->next = NULL;
 
   return new;
 }
 
-SequenceBlock convert(char *seq) {
+SequenceBlock convert(int *seq, int len) {
   Block *head = NULL, *cur = NULL;
   Block *new;
-  char ch;
-  int i = 0, changed = 1; 
+  int i, changed = 1; 
 
-  ch = seq[0];
-  while(ch != '\0') {
+  for (i = 0; i < len; i++) {
     if(changed) {
-      new = make_block(ch);
+      new = make_block(seq[i]);
       if(head == NULL) {
         head = new;
         cur = head;
@@ -39,27 +37,28 @@ SequenceBlock convert(char *seq) {
 
     if(seq[i] == seq[i + 1]) changed = 0;
     else changed = 1;
-
-    ch = seq[++i];
   }
 
   return head;
 }  
 
-char *revert(SequenceBlock block) {
-  char *seq;
+int *revert(SequenceBlock block, int *len) {
+  int *seq;
   Block *b;
-  int i, len = 0;
+  int i;
 
-  seq = malloc(MAX_LEN * sizeof(char));
+  seq = (int*) malloc (MAX_LEN * sizeof(int));
+  *len = 0;
   
   b = block;
   while(b) {
-    for(i = 0; i < b->len; i++) *(seq + (len++)) = b->letter;
+    for(i = 0; i < b->len; i++) {
+      seq[(*len)] = b->sym;
+      *len++;
+    }
+  
     b = b->next;
   }
-
-  *(seq + len) = '\0';
 
   return seq;
 }

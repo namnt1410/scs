@@ -4,53 +4,61 @@
 
 #include "sequence.h"
 
-int check_sequence(char *seq, char *alphabet) {
-  char ch;
-  int i = 0;
+int get_serial (int sym, int *alphabet, int alpha_len) {
+  int i;
+  
+  for (i = 0; i < alpha_len; i++) 
+    if (alphabet[i] == sym) return i;
 
-  ch = seq[0]; 
-  while(ch != '\0' && strchr(alphabet, ch) != NULL) ch = seq[i++];
-
-  return (ch == '\0');
+  return -1;
 }
 
-int check_supersequence(char *seq, char *super) {
+int check_sequence(int *seq, int len, int *alphabet, int alpha_len) {
+  int i;
+ 
+  for (i = 0; i < len; i++) 
+    if (get_serial(seq[i], alphabet, alpha_len) == -1) return 0; 
+
+  return 1;
+}
+
+int check_supersequence(int *seq, int len, int *super, int super_len) {
   int i = 0, j = 0;
 
-  while(seq[i] != '\0' && super[j] != '\0') {
+  while(i < len && j < super_len) {
     if(seq[i] == super[j]) i++;
     j++;
   }
 
-  return (seq[i] == '\0'); 
+  return (i == len); 
 }
 
-int check_common_supersequence(SequenceList list, char *super) {
+int check_common_supersequence(SequenceList list, int *super, int super_len) {
   Sequence *seq;
 
   seq = list;
   while(seq) {
-    if(!check_supersequence(seq->seq, super)) return 0;
+    if(!check_supersequence(seq->seq, seq->len, super, super_len)) return 0;
     seq =  seq->next;
   }
 
   return 1; 
 }
 
-Sequence *create_sequence(char *seq) {
+Sequence *create_sequence(int *seq, int len) {
   Sequence *new = (Sequence*)malloc(sizeof(Sequence));
 
-  new->len = strlen(seq);
-  new->seq = (char*) malloc ((new->len + 1) * sizeof(char));
-  strcpy(new->seq, seq);
+  new->len = len;
+  new->seq = (int*) malloc (len * sizeof(int));
+  memcpy (new->seq, seq, len * sizeof(int));
 
   new->next = NULL;
 
   return new;
 }
 
-Sequence *add_sequence(SequenceList *list, char *seq) {
-  Sequence *new_seq = create_sequence(seq); 
+Sequence *add_sequence(SequenceList *list, int *seq, int len) {
+  Sequence *new_seq = create_sequence(seq, len); 
   Sequence *curr_seq, *prev_seq;
   
   if(new_seq == NULL) return (new_seq);
@@ -75,17 +83,6 @@ Sequence *add_sequence(SequenceList *list, char *seq) {
   return new_seq;  
 }
 
-void free_list(SequenceList *list) {
-  Sequence *seq;
-
-  seq = *list;
-  while (seq) {
-    (*list) = (*list)->next;
-    free(seq);
-    seq = (*list);
-  }
-} 
-
 int get_size(SequenceList list) {
   Sequence *node = list;
   int len = 0;
@@ -97,3 +94,15 @@ int get_size(SequenceList list) {
 
   return len;
 }
+
+void free_list(SequenceList *list) {
+  Sequence *seq;
+
+  seq = *list;
+  while (seq) {
+    (*list) = (*list)->next;
+    free(seq);
+    seq = (*list);
+  }
+} 
+
