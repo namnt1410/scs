@@ -8,11 +8,11 @@
 #include "scs.h"
 #include "dag.h"
 
-char* scs_graph(SequenceList list, char* alphabet) {
+int scs_graph(SequenceList list, int *super) {
   JRB g = make_jrb();
   char *out;
-  int i;
-  int n;
+  int i, n;
+  int len, temp;
   int *tup;
   node_t *node, *root;
   node_t *prev, *cur;
@@ -21,7 +21,7 @@ char* scs_graph(SequenceList list, char* alphabet) {
   
   out = malloc((MAX_LEN + 1) * sizeof(char));
   n = get_size(list);
-  tup = (int*)malloc(n * sizeof(int));
+  tup = (int*) malloc (n * sizeof(int));
   memset(tup, 0, n * sizeof(int));
 
   root = make_node(tup, n);
@@ -44,21 +44,24 @@ char* scs_graph(SequenceList list, char* alphabet) {
       if (!p->visited) {
 	p->visited = 1; 
 	p->parent = node;
-        p->letter = jval_c(bnode->val);
+        p->sym = jval_i(bnode->val);
 	dll_append(queue, new_jval_v(p));
       } 
     }
   }
 
-  cur = node; out = strdup("");
+  cur = node; len = 0;
   while (cur != root) {
     prev = cur->parent;
-    for (i = strlen(out); i >= 0; i--) out[i + 1] = out[i];
-    out[0] = cur->letter;
-    cur = prev ;
+    super[len++] = cur->sym;
+    cur = prev;
+  }
+
+  for (i = 0; i < len/2; i++) {
+    temp = seq[i]; seq[i] = seq[len - i - 1]; seq[len - i - 1] = temp;
   }
 
   free(tup);
 
-  return out;
+  return len;
 }

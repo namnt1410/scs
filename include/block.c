@@ -42,25 +42,24 @@ SequenceBlock convert(int *seq, int len) {
   return head;
 }  
 
-int *revert(SequenceBlock block, int *len) {
-  int *seq;
+int revert(SequenceBlock block, int *seq) {
+  int len;
   Block *b;
   int i;
 
-  seq = (int*) malloc (MAX_LEN * sizeof(int));
-  *len = 0;
+  len = 0;
   
   b = block;
   while(b) {
     for(i = 0; i < b->len; i++) {
-      seq[(*len)] = b->sym;
-      *len++;
+      seq[len] = b->sym;
+      len++;
     }
   
     b = b->next;
   }
 
-  return seq;
+  return len;
 }
 
 int run(SequenceBlock block) {

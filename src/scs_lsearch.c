@@ -5,19 +5,16 @@
 #include "sequence.h"
 #include "lsearch/lsearch.h"
 
-char *scs_lsearch (SequenceList list, char *alphabet) {
+int scs_lsearch (SequenceList list, int *super) {
   Solution *sol;
-  char *seq;
 
   sol = lsearch(list); 
-  seq = (char*) malloc (sol->sol_len * sizeof(char));
-  // ls_evaluate (sol, NULL);
-  int val = ls_evaluate (sol, seq);
+  int val = ls_evaluate (sol, super);
 
   printf("val: %d\n", val);
-  printf("check: %d\n", check_common_supersequence(list, seq));
+  printf("check: %d\n", check_common_supersequence(list, super, val));
 
-  return seq;
+  return val;
 }
 
 

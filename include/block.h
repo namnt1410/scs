@@ -10,7 +10,7 @@ typedef struct block_t {
 typedef struct block_t *SequenceBlock; 
 
 SequenceBlock convert(int *seq, int len);
-int *revert(SequenceBlock block, int *len);
+int revert(SequenceBlock block, int *seq);
 Block *half_reduce(SequenceBlock block);
 int run(SequenceBlock block);
 

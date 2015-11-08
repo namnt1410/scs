@@ -79,14 +79,14 @@ Solution *lsearch (SequenceList list) {
   Solution *sol;
   SolutionNode *node;
   Sequence *seq;
-  char *super;
+  int *super;
   int val, min, best, better;
   int offsetmin, offsetmax;
   int offset, best_offset;
   int i, count, seqno, m = 0;  
 
   sol = ls_init(list);
-  super = (char*) malloc (sol->sol_len * sizeof(char));
+  super = (int*) malloc (sol->sol_len * sizeof(int));
   best = ls_evaluate(sol, super);
 
   do {
@@ -206,25 +206,25 @@ int ls_shift (SolutionNode *node, int offset) {
   return 1;
 }
 
-int ls_evaluate (Solution *sol, char *seq) {
+int ls_evaluate (Solution *sol, int *seq) {
   SolutionNode *node;
   int val = 0;
   int *touchtable;
-  char c;
+  int sym;
   
   touchtable = (int*) malloc (sol->seqs * sizeof(int));
   node = sol->first;
   while(node) {
     memset (touchtable, 0, sol->seqs * sizeof(int));
-    c = node->seq->seq[node->index];
-    seq[val++] = c;
+    sym = node->seq->seq[node->index];
+    seq[val++] = sym;
     touchtable[node->seqno] = 1;
     
     do {
       node = node->next;
-    } while(node && node->seq->seq[node->index] == c && !touchtable[node->seqno]++);
+    } while(node && node->seq->seq[node->index] == sym && !touchtable[node->seqno]++);
   }
-  seq[val] = '\0';
+
   free(touchtable);
 
   return val;

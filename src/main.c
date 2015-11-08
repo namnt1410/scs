@@ -32,8 +32,8 @@ int main(int argc, char **argv) {
 
   begin = clock();
 
-  len = scs_greedy(list, super);
-  printf("greedy: %d %d\n", len, check_common_supersequence(list, super, len));
+  len = scs_lsearch(list, super);
+  printf("lsearch: %d %d\n", len, check_common_supersequence(list, super, len));
   for (i = 0; i < len; i++) printf("%d ", super[i]);
   printf("\n");  
  

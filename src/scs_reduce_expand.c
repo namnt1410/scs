@@ -16,7 +16,7 @@ SequenceBlock *convert_sequencelist(SequenceList list) {
   
   node = list;
   while(node) {
-    blist[i++] = convert(node->seq);
+    blist[i++] = convert(node->seq, node->len);
     node = node->next;
   }
 
@@ -25,10 +25,14 @@ SequenceBlock *convert_sequencelist(SequenceList list) {
 
 SequenceList revert_sequencelist(SequenceBlock *blist, int n) {
   SequenceList list = NULL;
+  int seq[MAX_LEN];
+  int len;
   int i;
 
-  for(i = 0; i < n; i++) 
-    add_sequence(&list, revert(blist[i])); 
+  for(i = 0; i < n; i++) {
+    len = revert(blist[i], seq); 
+    add_sequence(&list, seq, len);
+  } 
 
   return list;
 }
@@ -48,7 +52,7 @@ SequenceList *reduce(SequenceList list, int *m) {
   }  
   *m = ceil(log(maxrun));
 
-  rlist = (SequenceList*)malloc((*m + 1) * sizeof(SequenceList));
+  rlist = (SequenceList*) malloc ((*m + 1) * sizeof(SequenceList));
   rlist[*m] = revert_sequencelist(blist, n); 
 
   half = blist; 
@@ -63,12 +67,14 @@ SequenceList *reduce(SequenceList list, int *m) {
   return rlist;
 }
 
-char *expand(SequenceList *rlist, int m, char *aux_seq) {
+int expand(SequenceList *rlist, int m, int *aux_seq, int aux_len, int *super) {
   int i;
   Block *bnode;
   SequenceBlock block;
+  int len;
+  int temp[MAX_LEN];
   
-  block = convert(aux_seq);
+  block = convert(aux_seq, aux_len);
   for(i = 1; i <= m; i++) {
     bnode = block;
     while(bnode) {
@@ -77,27 +83,33 @@ char *expand(SequenceList *rlist, int m, char *aux_seq) {
     }
     bnode = block;
     while(bnode) {
-      while(check_common_supersequence(rlist[i], revert(block)) && bnode->len >= 0)
+      len = revert(block, temp);
+      while(check_common_supersequence(rlist[i], temp, len) && bnode->len >= 0) {
         bnode->len--;
+        len = revert(block, temp);
+      }
       bnode->len++; bnode = bnode->next;
     }
   }
 
-  return revert(block);
+  len = revert(block, super);
+
+  return len;
 } 
 
 int scs_reduce_expand(SequenceList list, int *super) {
-  int i, m;
-  char aux_seq[MAX_LEN + 1];
+  int m;
+  int len;
+  int aux_seq[MAX_LEN], aux_len;
   SequenceList *rlist;
 
   rlist = reduce(list, &m);
-  strcpy(aux_seq, scs_greedy(rlist[0], aux_seq));
+  aux_len = scs_greedy(rlist[0], aux_seq);
 
-  out = expand(rlist, m, aux_seq);
+  len = expand(rlist, m, aux_seq, aux_len, super);
 
   /*for (i = 0; i <= m; i++) free_list(&rlist[i]);
   free(rlist);*/ 
 
-  return out;
+  return len;
 }
