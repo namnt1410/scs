@@ -1,6 +1,8 @@
 #ifndef __MMERGE_H__
 #define __MMERGE_H__
 
-char* mmerge(char **, int, char *, int (*majority)(char **, int, char *, int *, int **, int *));
+#include "sequence.h"
+
+int mmerge(Sequence **, int, int *, int, int (*majority)(Sequence **, int, int *, int, int *, int **, int *), int *);
 
 #endif

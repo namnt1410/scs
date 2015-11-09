@@ -51,6 +51,7 @@ Sequence *create_sequence(int *seq, int len) {
   new->len = len;
   new->seq = (int*) malloc (len * sizeof(int));
   memcpy (new->seq, seq, len * sizeof(int));
+  new->offset = 0;
 
   new->next = NULL;
 

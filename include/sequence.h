@@ -2,8 +2,9 @@
 #define __SEQUENCE_H__
 
 typedef struct Sequence_t {
-  int len;
   int *seq;
+  int len;
+  int offset;
   struct Sequence_t *next;
 } Sequence;
 

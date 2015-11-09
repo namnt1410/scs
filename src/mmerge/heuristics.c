@@ -7,11 +7,11 @@
 
 #define MAX_LEN 10000
 
-int heuristics_majority_H1(char **seq, int n, char *alphabet, int *count, int **index, int *wsum) {
+int heuristics_majority_H1(Sequence **seq, int n, int *alphabet, int alpha_len, int *count, int **index, int *wsum) {
   int i;
   int max = 0, maxval = -1;
 
-  for(i = 0; i < strlen(alphabet); i++) 
+  for(i = 0; i < alpha_len; i++) 
     if(wsum[i] > max) {
       max = wsum[i]; maxval = i;
     }
@@ -19,23 +19,23 @@ int heuristics_majority_H1(char **seq, int n, char *alphabet, int *count, int **
   return maxval;
 }
 
-int heuristics_majority_H2(char **seq, int n, char *alphabet, int *count, int **index, int *wsum) {
-  int i, j, idx;
+int heuristics_majority_H2(Sequence **seq, int n, int *alphabet, int alpha_len, int *count, int **index, int *wsum) {
+  Sequence *tmp;
+  int i, j;
   int max = 0, maxval = -1;
-  int alpha_len = strlen(alphabet);
-  int extra[alpha_len], extra_wsum[alpha_len];
-  char ch;
+  int *extra, *extra_wsum;
 
-  memset(extra, 0, alpha_len * sizeof(int));
+  extra = (int*) calloc (alpha_len, sizeof(int));
+  extra_wsum = (int*) malloc (alpha_len * sizeof(int));
 
   for(i = 0; i < alpha_len; i++) {
     if(!count[i]) continue;
 
-    memcpy(extra_wsum, wsum, alpha_len * sizeof(int)); extra_wsum[i] = 0;
+    memcpy(extra_wsum, wsum, alpha_len * sizeof(int)); 
+    extra_wsum[i] = 0;
     for(j = 0; j < count[i]; j++) {
-      idx = index[i][j];
-      ch = seq[idx][1];
-      if(ch != '\0') extra_wsum[(strchr(alphabet, ch) - alphabet)] += (strlen(seq[idx]) - 1); 
+      tmp = seq[index[i][j]];
+      if((tmp->offset + 1) < tmp->len) extra_wsum[tmp->seq[tmp->offset + 1]] += (tmp->len - tmp->offset - 1); 
     }
 
     for(j = 0; j < alpha_len; j++)
@@ -51,24 +51,21 @@ int heuristics_majority_H2(char **seq, int n, char *alphabet, int *count, int **
   return maxval;
 }
 
-int heuristics_majority_H3(char **seq, int n, char *alphabet, int *count, int **index, int *wsum) {
-  char* super;
-  char** child_seq;
+int heuristics_majority_H3(Sequence **seq, int n, int *alphabet, int alpha_len, int *count, int **index, int *wsum) {
+  Sequence **child_seq;
+  int super[MAX_LEN];
   int i, j, idx;
-  int alpha_len = strlen(alphabet);
   int super_len[alpha_len], minlen = MAX_LEN;
   int max = -1, maxval = -1;
 
-  child_seq = (char**)malloc(n * sizeof(char*));
-  for(i = 0; i < n; i++) child_seq[i] = (char*)malloc((MAX_LEN + 1) * sizeof(char));
-  super = (char*)malloc((MAX_LEN + 1) * sizeof(char));
+  child_seq = (Sequence**) malloc (n * sizeof(Sequence*));
+  for(i = 0; i < n; i++) child_seq[i] = (Sequence*) malloc (sizeof(Sequence));
 
   for(i = 0; i < alpha_len; i++) {
     if(!count[i]) continue;
-    for(j = 0; j < n; j++) strcpy(child_seq[j], seq[j]);
-    for(j = 0; j < count[i]; j++) ++child_seq[index[i][j]];
-    strcpy(super, mmerge(child_seq, n, alphabet, heuristics_majority_H1));
-    super_len[i] = strlen(super);
+    for(j = 0; j < n; j++) memcpy(child_seq[j], seq[j], sizeof(Sequence));
+    for(j = 0; j < count[i]; j++) child_seq[index[i][j]]->offset++;
+    super_len[i] = mmerge(child_seq, n, alphabet, alpha_len, heuristics_majority_H1, super);
     if(super_len[i] < minlen) minlen = super_len[i];
   }
 
@@ -76,11 +73,11 @@ int heuristics_majority_H3(char **seq, int n, char *alphabet, int *count, int **
     if(!count[i] || super_len[i] > minlen) continue;
     for(j = 0; j < count[i]; j++) {
       idx = index[i][j];
-      strcpy(child_seq[j], seq[idx] + 1); 
+      memcpy(child_seq[j], seq[idx], sizeof(Sequence));
+      child_seq[j]->offset++; 
     }
 
-    strcpy(super, mmerge(child_seq, count[i], alphabet, heuristics_majority_H1));
-    super_len[i] = strlen(super);
+    super_len[i] = mmerge(child_seq, count[i], alphabet, alpha_len, heuristics_majority_H1, super);
     if(super_len[i] > max) {
       max = super_len[i]; maxval = i;
     }

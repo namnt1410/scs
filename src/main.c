@@ -11,7 +11,7 @@ int main(int argc, char **argv) {
   int alphabet[1000];
   int i;
   int arg_size, arg_min, arg_max, alpha_len;
-  int super[1000];
+  int super[10000];
   int len;
 
   if (strcmp(argv[1], "r") == 0 && argc >= 3) {
@@ -32,10 +32,10 @@ int main(int argc, char **argv) {
 
   begin = clock();
 
-  len = scs_lsearch(list, super);
-  printf("lsearch: %d %d\n", len, check_common_supersequence(list, super, len));
-  for (i = 0; i < len; i++) printf("%d ", super[i]);
-  printf("\n");  
+  len = scs_mmerge(list, alphabet, alpha_len, super);
+  printf("mmerge: %d %d\n", len, check_common_supersequence(list, super, len));
+  //for (i = 0; i < len; i++) printf("%d ", super[i]);
+  //printf("\n");  
  
   end = clock();
 
@@ -73,7 +73,7 @@ int main(int argc, char **argv) {
 
   printf("Elapsed time: %lf ms\n", time_spent * 1000);*/
 
-  free_list(&list);
+  //free_list(&list);
 
   return 0;
 }
