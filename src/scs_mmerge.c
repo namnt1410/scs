@@ -34,5 +34,5 @@ int scs_mmerge(SequenceList list, int *alphabet, int alpha_len, int *super) {
     node = node->next;
   }
 
-  return mmerge(seq, n, alphabet, alpha_len, heuristics_majority_H3, super);
+  return mmerge(seq, n, alphabet, alpha_len, def_majority, super);
 }

@@ -7,6 +7,7 @@
 Solution *ls_init(SequenceList list);
 int ls_neighborhood (SolutionNode *node, int *offsetmin, int *offsetmax);
 int ls_shift (SolutionNode *node, int offset);
+int ls_exchange (SolutionNode *node, int offset);
 
 Solution *ls_init(SequenceList list) {
   Solution *sol;
@@ -57,10 +58,12 @@ Solution *ls_init(SequenceList list) {
         count++;
         node = sol->node_tbl[seqno][i];
         if (!sol->first) {
+          node->pos = 0;
           sol->first = node;
           sol->last = node;
         } else {
           node->prev = sol->last;
+          node->pos = node->prev->pos + 1;
           sol->last->next = node;
           sol->last = node;
         }
@@ -104,7 +107,7 @@ Solution *lsearch (SequenceList list) {
 	  offset = offsetmin;
           //printf("offset: %d %d\n", offsetmin, offsetmax);
 	  while (offset <= offsetmax) {
-	    if (offset != 0 && ls_shift (node, offset)) {
+	    if (offset != 0 && ls_exchange (node, offset)) {
 	      val = ls_evaluate (sol, super);
 
               //printf("val: %d\n", val);
@@ -114,13 +117,13 @@ Solution *lsearch (SequenceList list) {
 		best_offset = offset;
 	      }
             
-	      ls_shift (node, -offset);
+	      ls_exchange (node, -offset);
 	    }
 	    offset++;
 	  }
 
 	  if (min < best) {
-	    ls_shift (node, best_offset);
+	    ls_exchange (node, best_offset);
 	    best = ls_evaluate (sol, super);
             better = 1;
 	  }
@@ -166,7 +169,7 @@ int ls_neighborhood (SolutionNode *node, int *offsetmin, int *offsetmax) {
 } 
 
 int ls_shift (SolutionNode *node, int offset) {
-  if (offset == 0) return 0;
+  if (offset == 0 || node->pos + offset < 0 || node->pos + offset >= node->sol->sol_len) return 0;
 
   SolutionNode *victim, *prev, *next;
   int i;
@@ -176,22 +179,20 @@ int ls_shift (SolutionNode *node, int offset) {
   victim = node;
 
   if (offset < 0) {
-    for (i = 0; i > offset && victim; i--) 
-      victim = victim->prev;
-
-    if (i > offset) return 0;
-    
+    for (i = 0; i > offset; i--) { 
+      victim = victim->prev; victim->pos++;
+    }
     node->prev = victim->prev;
     node->next = victim;
   } else if (offset > 0) {
-    for (i = 0; i < offset && victim; i++)
-      victim = victim->next;
-
-    if (i < offset) return 0;
-
+    for (i = 0; i < offset; i++) {
+      victim = victim->next; victim->pos--;
+    }
     node->prev = victim;
     node->next = victim->next;
   }
+
+  node->pos = node->pos + offset;
 
   if (prev) prev->next = next;
   else node->sol->first = next;
@@ -205,6 +206,59 @@ int ls_shift (SolutionNode *node, int offset) {
 
   return 1;
 }
+
+int ls_exchange (SolutionNode *node, int offset) {
+  //printf("1111\n");
+  if (offset == 0 || node->pos + offset < 0 || node->pos + offset >= node->sol->sol_len) return 0;
+
+  SolutionNode *victim;
+  SolutionNode *left, *right, *prev, *next;
+  int i, temp;
+ 
+  victim = node;
+
+  if (offset < 0) {
+    for (i = 0; i > offset; i--) 
+      victim = victim->prev;
+    if (victim->right_nbr && victim->right_nbr->pos < node->pos) return 0;
+    left = victim; right = node;
+  } else if (offset > 0) {
+    for (i = 0; i < offset; i++) 
+      victim = victim->next;
+    if (victim->left_nbr && victim->left_nbr->pos > node->pos) return 0;
+    left = node; right = victim; 
+  }
+
+  //printf ("3333\n");
+
+  prev = right->prev;
+  right->prev = left->prev;
+  if (right->prev) right->prev->next = right;
+
+  next = left->next;
+  left->next = right->next;
+  if (right->next) right->next->prev = left;
+
+  if (left == prev) {
+    right->next = left;
+    left->prev = right;
+  } else {
+    right->next = next;
+    next->prev = right;
+    left->prev = prev;
+    prev->next = left;
+  } 
+
+  if (left == left->sol->first) left->sol->first = right;
+  if (right == right->sol->last) right->sol->last = left;
+
+  temp = left->pos; left->pos = right->pos; right->pos = temp;
+
+  //printf ("2222\n");
+
+  return 1;
+  
+} 
 
 int ls_evaluate (Solution *sol, int *seq) {
   SolutionNode *node;

@@ -7,6 +7,7 @@ typedef struct SolutionNode SolutionNode;
 typedef struct Solution Solution;
 
 typedef struct SolutionNode {
+  int pos;
   int seqno;
   int index;
   Sequence *seq;

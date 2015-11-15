@@ -30,11 +30,10 @@ int main(int argc, char **argv) {
   clock_t begin, end;
   double time_spent;
 
-  begin = clock();
+  /*begin = clock();
 
   len = scs_mmerge(list, alphabet, alpha_len, super);
   printf("mmerge: %d %d\n", len, check_common_supersequence(list, super, len));
-  //for (i = 0; i < len; i++) printf("%d ", super[i]);
   //printf("\n");  
  
   end = clock();
@@ -43,35 +42,27 @@ int main(int argc, char **argv) {
 
   printf("Elapsed time: %lf ms\n", time_spent * 1000);
 
-  /* begin = clock();
-
-  printf("mmerge: %d\n", strlen(scs_mmerge(list, alphabet)));
- 
-  end = clock();
-
-  time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
-
-  printf("Elapsed time: %lf ms\n", time_spent * 1000);
-
   begin = clock();
 
-  printf("greedy: %d\n", strlen(scs_greedy(list, alphabet)));
- 
-  end = clock();
-
-  time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
-
-  printf("Elapsed time: %lf ms\n", time_spent * 1000);
-
-  begin = clock();
-
-  printf("reduce expand: %d\n", strlen(scs_reduce_expand(list, alphabet)));
+  len = scs_greedy(list, super);
+  printf("greedy: %d %d\n", len, check_common_supersequence(list, super, len));
  
   end = clock();
 
   time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
 
   printf("Elapsed time: %lf ms\n", time_spent * 1000);*/
+
+  begin = clock();
+
+  len = scs_lsearch(list, super);
+  printf("lsearch: %d %d\n", len, check_common_supersequence(list, super, len));
+ 
+  end = clock();
+
+  time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
+
+  printf("Elapsed time: %lf ms\n", time_spent * 1000);
 
   //free_list(&list);
 
