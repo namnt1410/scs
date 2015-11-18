@@ -6,6 +6,7 @@
 
 Solution *ls_init(SequenceList list);
 int ls_neighborhood (SolutionNode *node, int *offsetmin, int *offsetmax);
+int ls_localchange (SolutionNode *node, int offset, int change_type);
 int ls_shift (SolutionNode *node, int offset);
 int ls_exchange (SolutionNode *node, int offset);
 
@@ -167,6 +168,16 @@ int ls_neighborhood (SolutionNode *node, int *offsetmin, int *offsetmax) {
 
   return 1;
 } 
+
+int ls_localchange (SolutionNode *node, int offset, int change_type) {
+  if (change_type == LOCALCHANGE_TYPE_SHIFT) {
+    return ls_shift (node, offset);
+  } else if (change_type == LOCALCHANGE_TYPE_EXCHANGE) {
+    return ls_exchange (node, offset);
+  }
+
+  return 0;
+}
 
 int ls_shift (SolutionNode *node, int offset) {
   if (offset == 0 || node->pos + offset < 0 || node->pos + offset >= node->sol->sol_len) return 0;

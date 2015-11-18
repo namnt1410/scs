@@ -3,6 +3,9 @@
 
 #include "sequence.h"
 
+#define LOCALCHANGE_TYPE_SHIFT	0
+#define LOCALCHANGE_TYPE_EXCHANGE	1
+
 typedef struct SolutionNode SolutionNode;
 typedef struct Solution Solution;
 

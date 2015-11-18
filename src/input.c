@@ -7,31 +7,37 @@
 
 #include "input.h"
 
-/*SequenceList readsequences (char* filename, int *alphabet, int *alpha_len) {
+SequenceList readsequences (char* filename, int *alphabet, int *alpha_len) {
   SequenceList list;
-  IS is ;
+  IS is;
+  int *seq;
+  int sym;
+  int *tbl;
+  int len;
 
-  is = new_inputstruct (filename); 
+  is = new_inputstruct (filename);
+  seq = (int*) malloc (MAXLEN * sizeof(int)); 
+  tbl = (int*) calloc (128, sizeof(int));  
 
-  if(get_line(is) >= 0) 
-    alphabet = strdup(is->fields[0]);
-  else return NULL;
-  
+  *alpha_len = 0;
   list = NULL;
 
   while(get_line(is) >= 0) {
-    if (!strcmp(is->fields[0], "")) continue;
-    if (!check_sequence(is->fields[0], alphabet)) {
-      printf("input: invalid sequence.\n");
-      exit(0);
+    len = 0; sym = is->text1[0];
+    while (sym != '\n') {
+      if (!tbl[sym]) {
+        tbl[sym] = 1; alphabet[(*alpha_len)++] = sym;
+      }
+      seq[len++] = sym;
+      sym = is->text1[len];
     }
-    add_sequence(&list, is->fields[0]);
+    add_sequence(&list, seq, len);
   }
 
   jettison_inputstruct (is);
 
   return list;
-}*/
+}
 
 SequenceList gensequences (int size, int min_len, int max_len, int alpha_len, int *alphabet) {
   SequenceList list;

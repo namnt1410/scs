@@ -15,8 +15,7 @@ int main(int argc, char **argv) {
   int len;
 
   if (strcmp(argv[1], "r") == 0 && argc >= 3) {
-    //list = readsequences(argv[2], alphabet);
-    list = gensequences(10, 5, 5, 10, alphabet);
+    list = readsequences(argv[2], alphabet, &alpha_len);
   } else if (strcmp(argv[1], "g") == 0 && argc >= 6) {
     arg_size = atoi(argv[2]); arg_min = atoi(argv[3]);
     arg_max = atoi(argv[4]); alpha_len = atoi(argv[5]); 
