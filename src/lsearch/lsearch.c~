@@ -169,10 +169,10 @@ int ls_neighborhood (SolutionNode *node, int *offsetmin, int *offsetmax) {
   return 1;
 } 
 
-int ls_localchange (SolutionNode *node, int offset, int lc_type) {
-  if (lc_type == LC_TYPE_SHIFT) {
+int ls_localchange (SolutionNode *node, int offset, int change_type) {
+  if (change_type == LOCALCHANGE_TYPE_SHIFT) {
     return ls_shift (node, offset);
-  } else if (lc_type == LC_TYPE_EXCHANGE) {
+  } else if (change_type == LOCALCHANGE_TYPE_EXCHANGE) {
     return ls_exchange (node, offset);
   }
 
