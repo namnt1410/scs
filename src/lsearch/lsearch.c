@@ -98,9 +98,11 @@ Solution *lsearch (SequenceList list) {
 	if(i < seq->len) {
 	  count++;
 	  node = sol->node_tbl[seqno][i];
-          if (i > 0) offsetmin = sol->node_tbl[seqno][i - 1]->pos - node->pos + 1;
+          if (i > 0) 
+	    offsetmin = sol->node_tbl[seqno][i - 1]->pos - node->pos + 1;
           else offsetmin = -node->pos;
-          if ((seq->len - i) > 1) offsetmax = sol->node_tbl[seqno][i + 1]->pos - node->pos - 1;
+          if ((seq->len - i) > 1) 
+	    offsetmax = sol->node_tbl[seqno][i + 1]->pos - node->pos - 1;
           else offsetmax = sol->sol_len - node->pos - 1;
  
 	  offset = offsetmin;
@@ -147,8 +149,14 @@ int check_solution (Solution *sol) {
   return 1;
 }
 
+int changeable (Solution *sol, SolutionNode *node, int offset) {
+  return (node && offset != 0 && 
+	  node->pos >= 0 && node->pos < sol->sol_len && 
+	  node->pos + offset >= 0 && node->pos + offset <= sol->sol_len); 
+} 
+
 int ls_shift (Solution *sol, SolutionNode *node, int offset) {
-  if (offset == 0 || node->pos + offset < 0 || node->pos + offset >= sol->sol_len) return 0;
+  if (!changeable (sol, node, offset)) return 0;
 
   SolutionNode *victim, *prev, *next;
   int i;
@@ -190,7 +198,7 @@ int ls_shift (Solution *sol, SolutionNode *node, int offset) {
 }
 
 int ls_exchange (Solution *sol, SolutionNode *node, int offset) {
-  if (offset == 0 || node->pos + offset < 0 || node->pos + offset >= sol->sol_len) return 0;
+  if (!changeable (sol, node, offset)) return 0;
 
   SolutionNode *victim;
   SolutionNode *left, *right, *prev, *next;
@@ -258,7 +266,9 @@ int ls_evaluate (Solution *sol, int *seq) {
     
     do {
       node = node->next;
-    } while(node && node->seq->seq[node->index] == sym && !touchtable[node->seqno]++);
+    } while(node && 
+	    node->seq->seq[node->index] == sym && 
+	    !touchtable[node->seqno]++);
   }
 
   free(touchtable);
