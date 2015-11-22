@@ -15,7 +15,7 @@ Solution *ls_init(SequenceList list) {
   int seqno, i;
   int count;
 
-  sol = (Solution*) malloc (sizeof(Solution));
+  sol = (Solution *) malloc (sizeof(Solution));
 
   sol->first = NULL;
   sol->last = NULL;
@@ -34,6 +34,7 @@ Solution *ls_init(SequenceList list) {
       node->seqno = seqno;
       node->index = i;
       node->seq = seq;
+      node->block = NULL;
 
       node->prev = NULL; node->next = NULL;
     }
@@ -41,7 +42,10 @@ Solution *ls_init(SequenceList list) {
     seq = seq->next; seqno++; 
   } 
 
-  sol->sol = (SolutionNode**) malloc (sol->sol_len * sizeof(SolutionNode*));
+  sol->sol = (SolutionNode **) malloc (sizeof(SolutionNode *) * sol->sol_len);
+
+  sol->block_tbl = (SolutionBlock **) malloc (sol->sol_len * sizeof(SolutionBlock *));
+  for (i = 0; i < sol->sol_len; i++) sol->block_tbl[i] = (SolutionBlock *) malloc (sizeof(SolutionBlock));
 
   i = 0;
   do {
@@ -58,10 +62,10 @@ Solution *ls_init(SequenceList list) {
         } else {
           node->prev = sol->last;
           node->pos = node->prev->pos + 1;
-          sol->sol[node->pos] = node;
           sol->last->next = node;
           sol->last = node;
         }
+        sol->sol[node->pos] = node;
       }
 
       seq = seq->next; seqno++;
@@ -192,8 +196,6 @@ int ls_shift (Solution *sol, SolutionNode *node, int offset) {
   if(node->next) node->next->prev = node;
   else sol->last = node;
 
-  if (!check_solution (sol)) printf("invalid\n");
-
   return 1;
 }
 
@@ -245,8 +247,6 @@ int ls_exchange (Solution *sol, SolutionNode *node, int offset) {
   right->pos = pos1; sol->sol[pos1] = right; 
   left->pos = pos2; sol->sol[pos2] = left;
 
-  if (!check_solution (sol)) printf("invalid\n");
-
   return 1;
 } 
 
@@ -255,16 +255,24 @@ int ls_evaluate (Solution *sol, int *seq) {
   int val = 0;
   int *touchtable;
   int sym;
+  SolutionBlock *block;
   
   touchtable = (int*) malloc (sol->seqs * sizeof(int));
   node = sol->first;
   while(node) {
     memset (touchtable, 0, sol->seqs * sizeof(int));
+
+    block = sol->block_tbl[node->pos];
+    block->pos = node->pos;
+    block->len = 0;
+
     sym = node->seq->seq[node->index];
     seq[val++] = sym;
     touchtable[node->seqno] = 1;
     
     do {
+      block->len++;
+      node->block = block;
       node = node->next;
     } while(node && 
 	    node->seq->seq[node->index] == sym && 

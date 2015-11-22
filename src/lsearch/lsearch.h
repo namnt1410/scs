@@ -7,6 +7,7 @@
 #define LC_TYPE_EXCHANGE	1
 
 typedef struct SolutionNode SolutionNode;
+typedef struct SolutionBlock SolutionBlock;
 typedef struct Solution Solution;
 
 typedef struct SolutionNode {
@@ -14,14 +15,21 @@ typedef struct SolutionNode {
   int seqno;
   int index;
   Sequence *seq;
+  SolutionBlock *block;
   struct SolutionNode *prev, *next;
 } SolutionNode;
+
+typedef struct SolutionBlock {
+  int pos;
+  int len;
+} SolutionBlock;
 
 typedef struct Solution {
   SolutionNode *first;
   SolutionNode *last;
   SolutionNode ***node_tbl;
   SolutionNode **sol;
+  SolutionBlock **block_tbl;
   int sol_len;
   int seqs;
 } Solution;
