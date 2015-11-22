@@ -138,6 +138,15 @@ Solution *lsearch (SequenceList list) {
   return sol;
 }
 
+int check_solution (Solution *sol) {
+  int i;
+
+  for (i = 0; i < sol->sol_len; i++)
+    if (sol->sol[i]->pos != i) return 0;
+
+  return 1;
+}
+
 int ls_shift (Solution *sol, SolutionNode *node, int offset) {
   if (offset == 0 || node->pos + offset < 0 || node->pos + offset >= sol->sol_len) return 0;
 
@@ -163,6 +172,7 @@ int ls_shift (Solution *sol, SolutionNode *node, int offset) {
   }
 
   node->pos = node->pos + offset;
+  sol->sol[node->pos] = node;
 
   if (prev) prev->next = next;
   else sol->first = next;
@@ -174,6 +184,8 @@ int ls_shift (Solution *sol, SolutionNode *node, int offset) {
   if(node->next) node->next->prev = node;
   else sol->last = node;
 
+  if (!check_solution (sol)) printf("invalid\n");
+
   return 1;
 }
 
@@ -182,7 +194,8 @@ int ls_exchange (Solution *sol, SolutionNode *node, int offset) {
 
   SolutionNode *victim;
   SolutionNode *left, *right, *prev, *next;
-  int i, temp;
+  int pos1, pos2;
+  int i;
  
   victim = node;
 
@@ -197,6 +210,8 @@ int ls_exchange (Solution *sol, SolutionNode *node, int offset) {
     if (victim->index && sol->node_tbl[victim->seqno][victim->index - 1]->pos > node->pos) return 0;
     left = node; right = victim; 
   }
+
+  pos1 = left->pos; pos2 = right->pos;
 
   prev = right->prev;
   right->prev = left->prev;
@@ -219,8 +234,10 @@ int ls_exchange (Solution *sol, SolutionNode *node, int offset) {
   if (left == sol->first) sol->first = right;
   if (right == sol->last) sol->last = left;
 
-  temp = left->pos; left->pos = right->pos; right->pos = temp;
-  sol->sol[left->pos] = left; sol->sol[right->pos] = right;
+  right->pos = pos1; sol->sol[pos1] = right; 
+  left->pos = pos2; sol->sol[pos2] = left;
+
+  if (!check_solution (sol)) printf("invalid\n");
 
   return 1;
 } 
