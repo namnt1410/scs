@@ -14,8 +14,6 @@ typedef struct SolutionNode {
   int seqno;
   int index;
   Sequence *seq;
-  Solution *sol;
-  struct SolutionNode *left_nbr, *right_nbr;
   struct SolutionNode *prev, *next;
 } SolutionNode;
 
@@ -23,8 +21,9 @@ typedef struct Solution {
   SolutionNode *first;
   SolutionNode *last;
   SolutionNode ***node_tbl;
-  int seqs;
+  SolutionNode **sol;
   int sol_len;
+  int seqs;
 } Solution;
 
 Solution *lsearch (SequenceList list);
