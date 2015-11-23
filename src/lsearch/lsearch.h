@@ -35,6 +35,6 @@ typedef struct Solution {
 } Solution;
 
 Solution *lsearch (SequenceList list);
-int ls_evaluate (Solution *sol, int *seq);  
+int ls_evaluate (Solution *sol, int start, int end, int *seq);  
 
 #endif

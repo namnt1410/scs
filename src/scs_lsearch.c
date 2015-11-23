@@ -11,7 +11,7 @@ int scs_lsearch (SequenceList list, int *super) {
   int pos = -1; 
 
   sol = lsearch(list); 
-  int val = ls_evaluate (sol, super);
+  int val = ls_evaluate (sol, 0, sol->sol_len - 1, super);
 
   node = sol->first;
   while (node) {
