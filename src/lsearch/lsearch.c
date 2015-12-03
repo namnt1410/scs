@@ -10,7 +10,7 @@ Solution *ls_init(SequenceList list);
 void ls_compress (Solution *sol, int start, int end);
 int ls_localchange (Solution *sol, SolutionNode *node, int offset, int *start, int *end);
 int ls_shift (Solution *sol, SolutionNode *node, int offset);
-int ls_exchange (Solution *sol, SolutionNode *node, int offset);
+//int ls_exchange (Solution *sol, SolutionNode *node, int offset);
 
 Solution *ls_init(SequenceList list) {
   Solution *sol;
@@ -172,15 +172,13 @@ int ls_localchange (Solution *sol, SolutionNode *node, int offset, int *start, i
   victim = sol->sol[node->pos + offset];
 
   if (offset > 0) {
-    if (node->prev && 
-	node->pos == node->block->pos) 
+    if (node->pos) 
       *start = node->prev->block->pos;
     else *start = node->block->pos; 
     
     *end = node->pos + offset;
   } else { 
-    if (victim->prev && 
-	victim->pos == victim->block->pos) 
+    if (victim->pos) 
       *start = victim->prev->block->pos;
     else *start = victim->block->pos;
     
@@ -256,7 +254,7 @@ int ls_shift (Solution *sol, SolutionNode *node, int offset) {
   return 1;
 }
 
-int ls_exchange (Solution *sol, SolutionNode *node, int offset) {
+/*int ls_exchange (Solution *sol, SolutionNode *node, int offset) {
   if (!localchangeable (sol, node, offset)) return 0;
 
   SolutionNode *victim;
@@ -306,7 +304,7 @@ int ls_exchange (Solution *sol, SolutionNode *node, int offset) {
   left->pos = pos2; sol->sol[pos2] = left;
 
   return 1;
-} 
+}*/ 
 
 void ls_compress (Solution *sol, int start, int end) {
   if (start >= end || start < 0 || end >= sol->sol_len) return;
