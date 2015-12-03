@@ -17,12 +17,9 @@ Solution *ls_init(SequenceList list) {
   SolutionNode *node;
   Sequence *seq;
   int seqno, i;
-  int count;
+  int count, pos;
 
   sol = (Solution *) malloc (sizeof(Solution));
-
-  sol->first = NULL;
-  sol->last = NULL;
   sol->seqs = get_size(list); 
   sol->node_tbl = 
     (SolutionNode ***) malloc (sizeof(SolutionNode **) * sol->seqs);
@@ -55,7 +52,7 @@ Solution *ls_init(SequenceList list) {
   for (i = 0; i < sol->sol_len; i++) 
     sol->block_tbl[i] = (SolutionBlock *) malloc (sizeof(SolutionBlock));
 
-  i = 0;
+  pos = 0; i = 0;
   do {
     count = 0;
     seq = list; seqno = 0;
@@ -63,16 +60,11 @@ Solution *ls_init(SequenceList list) {
       if (i < seq->len) {
         count++;
         node = sol->node_tbl[seqno][i];
-        if (!sol->first) {
-          node->pos = 0;
-          sol->first = node;
-          sol->last = node;
-        } else {
-          node->prev = sol->last;
-          node->pos = node->prev->pos + 1;
-          sol->last->next = node;
-          sol->last = node;
+        if (pos) {
+          node->prev = sol->sol[pos - 1];
+          node->prev->next = node;
         }
+        node->pos = pos++;
         sol->sol[node->pos] = node;
       }
 
@@ -81,8 +73,6 @@ Solution *ls_init(SequenceList list) {
 
     i++;
   } while (count); 
-
-  ls_compress (sol, 0, sol->sol_len - 1);
 
   return sol;
 }
@@ -98,6 +88,7 @@ Solution *lsearch (SequenceList list) {
   int i, count, seqno, m = 0; 
 
   sol = ls_init(list);
+  ls_compress (sol, 0, sol->sol_len - 1);
 
   do {
     loop++;
@@ -156,13 +147,9 @@ Solution *lsearch (SequenceList list) {
 
 int check_solution (Solution *sol) {
   int i;
-  SolutionNode *node;
 
-  node = sol->first;
   for (i = 0; i < sol->sol_len; i++) {
     if (sol->sol[i]->pos != i) return 0;
-    if (node != sol->sol[i]) return 0;
-    node = node->next;
   }
 
   return 1;
@@ -257,14 +244,10 @@ int ls_shift (Solution *sol, SolutionNode *node, int offset) {
   sol->sol[node->pos] = node;
 
   if (prev) prev->next = next;
-  else sol->first = next;
   if (next) next->prev = prev;
-  else sol->last = prev;
 
   if(node->prev) node->prev->next = node;
-  else sol->first = node; 
   if(node->next) node->next->prev = node;
-  else sol->last = node;
 
   if (!check_solution (sol)) printf("Invalid!\n");
 
@@ -316,9 +299,6 @@ int ls_exchange (Solution *sol, SolutionNode *node, int offset) {
     left->prev = prev;
     prev->next = left;
   } 
-
-  if (left == sol->first) sol->first = right;
-  if (right == sol->last) sol->last = left;
 
   right->pos = pos1; sol->sol[pos1] = right; 
   left->pos = pos2; sol->sol[pos2] = left;

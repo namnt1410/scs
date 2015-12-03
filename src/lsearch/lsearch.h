@@ -25,8 +25,6 @@ typedef struct SolutionBlock {
 } SolutionBlock;
 
 typedef struct Solution {
-  SolutionNode *first;
-  SolutionNode *last;
   SolutionNode ***node_tbl;
   SolutionNode **sol;
   SolutionBlock **block_tbl;
