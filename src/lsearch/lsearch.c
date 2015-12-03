@@ -10,7 +10,7 @@ Solution *ls_init(SequenceList list);
 void ls_compress (Solution *sol, int start, int end);
 int ls_localchange (Solution *sol, SolutionNode *node, int offset, int *start, int *end);
 int ls_shift (Solution *sol, SolutionNode *node, int offset);
-int ls_exchange (Solution *sol, SolutionNode *node, int offset);
+//int ls_exchange (Solution *sol, SolutionNode *node, int offset);
 
 Solution *ls_init(SequenceList list) {
   Solution *sol;
@@ -254,7 +254,7 @@ int ls_shift (Solution *sol, SolutionNode *node, int offset) {
   return 1;
 }
 
-int ls_exchange (Solution *sol, SolutionNode *node, int offset) {
+/*int ls_exchange (Solution *sol, SolutionNode *node, int offset) {
   if (!localchangeable (sol, node, offset)) return 0;
 
   SolutionNode *victim;
@@ -304,23 +304,23 @@ int ls_exchange (Solution *sol, SolutionNode *node, int offset) {
   left->pos = pos2; sol->sol[pos2] = left;
 
   return 1;
-} 
+}*/ 
 
 void ls_compress (Solution *sol, int start, int end) {
   if (start >= end || start < 0 || end >= sol->sol_len) return;
 
   SolutionNode *node;
   int *touchtable;
-  int sym;
+  int pos, sym;
   SolutionBlock *block;
 
   touchtable = (int*) malloc (sol->seqs * sizeof(int));
-  node = sol->sol[start];
-  while (node && node->pos <= end) {
+  node = sol->sol[start]; pos = start;
+  while (node && pos <= end) {
     memset (touchtable, 0, sol->seqs * sizeof(int));
 
     block = sol->block_tbl[node->pos];
-    block->pos = node->pos;
+    block->pos = pos;
     block->len = 0;
 
     sym = node->seq->seq[node->index];
@@ -329,11 +329,15 @@ void ls_compress (Solution *sol, int start, int end) {
     do {
       block->len++;
       node->block = block;
-      node = node->next;
-    } while(node && node->pos <= end &&
+      node->pos = pos;
+      if (++pos < sol->sol_len) node = sol->sol[pos];
+      else node = NULL;
+    } while(node && pos <= end &&
 	    node->seq->seq[node->index] == sym && 
 	    !touchtable[node->seqno]++);
   }
+
+  if (!check_solution (sol)) printf("Invalid!\n");
 
   free(touchtable);
 }
