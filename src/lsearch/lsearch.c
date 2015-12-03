@@ -342,19 +342,18 @@ int ls_evaluate (Solution *sol, int start, int end, int *seq) {
   if (start >= end || start < 0 || end >= sol->sol_len) 
     return 0;
  
-  SolutionNode *node, *first, *last;
-  int val = 1;
+  SolutionNode *node;
+  int i, val = 1;
   int sym;
 
-  first = sol->sol[start];
-  last = sol->sol[end];
-
-  sym = first->seq->seq[first->index];
+  node = sol->sol[start];
+  sym = node->seq->seq[node->index];
   if (seq) seq[0] = sym;
 
-  for (node = first; node != last; node = node->next) {
-    if (node->block != node->next->block) {
-      sym = node->next->seq->seq[node->next->index];
+  for (i = start; i < end; i++) {
+    if (sol->sol[i]->block != sol->sol[i + 1]->block) {
+      node = sol->sol[i + 1];
+      sym = node->seq->seq[node->index];
       if (seq) seq[val] = sym;
       val++;
     }
