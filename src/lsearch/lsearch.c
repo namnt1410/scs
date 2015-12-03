@@ -10,7 +10,7 @@ Solution *ls_init(SequenceList list);
 void ls_compress (Solution *sol, int start, int end);
 int ls_localchange (Solution *sol, SolutionNode *node, int offset, int *start, int *end);
 int ls_shift (Solution *sol, SolutionNode *node, int offset);
-//int ls_exchange (Solution *sol, SolutionNode *node, int offset);
+int ls_exchange (Solution *sol, SolutionNode *node, int offset);
 
 Solution *ls_init(SequenceList list) {
   Solution *sol;
@@ -166,7 +166,7 @@ int ls_localchange (Solution *sol, SolutionNode *node, int offset, int *start, i
 
   SolutionNode *node2, *victim;
   int *touchtable;
-  int sym;
+  int ptr, sym;
   int count = 0;
 
   victim = sol->sol[node->pos + offset];
@@ -190,23 +190,25 @@ int ls_localchange (Solution *sol, SolutionNode *node, int offset, int *start, i
   ls_shift (sol, node, offset);
 
   touchtable = (int*) malloc (sol->seqs * sizeof(int));
-  node2 = sol->sol[*start];
+  node2 = sol->sol[*start]; ptr = *start;
   while (node2 && 
-	 (node2->pos <= *end || 
-	  node2->pos != node2->block->pos)) {
+	 (ptr <= *end || 
+	  ptr != node2->block->pos)) {
     sym = node2->seq->seq[node2->index];
     count++;
 
     memset (touchtable, 0, sol->seqs * sizeof(int));
-    touchtable[node2->seqno] = 1;  
+    touchtable[node2->seqno] = 1; 
+ 
     do {
-      node2 = node2->next;
+      if (++ptr < sol->sol_len) node2 = sol->sol[ptr]; 
+      else node2 = NULL;
     } while(node2 &&
 	    node2->seq->seq[node2->index] == sym && 
 	    !touchtable[node2->seqno]++);
   }
 
-  if (node2) *end = node2->pos - 1;
+  if (node2) *end = ptr - 1;
   else *end = sol->sol_len - 1;
 
   ls_shift (sol, node, -offset);
@@ -254,7 +256,7 @@ int ls_shift (Solution *sol, SolutionNode *node, int offset) {
   return 1;
 }
 
-/*int ls_exchange (Solution *sol, SolutionNode *node, int offset) {
+int ls_exchange (Solution *sol, SolutionNode *node, int offset) {
   if (!localchangeable (sol, node, offset)) return 0;
 
   SolutionNode *victim;
@@ -304,7 +306,7 @@ int ls_shift (Solution *sol, SolutionNode *node, int offset) {
   left->pos = pos2; sol->sol[pos2] = left;
 
   return 1;
-}*/ 
+} 
 
 void ls_compress (Solution *sol, int start, int end) {
   if (start >= end || start < 0 || end >= sol->sol_len) return;
