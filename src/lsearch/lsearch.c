@@ -8,8 +8,8 @@ static int loop = 0;
 
 Solution *ls_init(SequenceList list);
 void ls_compress (Solution *sol, int start, int end);
-int ls_localchange (Solution *sol, SolutionNode *node, int offset, int *start, int *end);
-int ls_shift (Solution *sol, SolutionNode *node, int offset);
+int ls_localchange (Solution *sol, int pos, int offset, int *start, int *end);
+int ls_shift (Solution *sol, int pos, int offset);
 //int ls_exchange (Solution *sol, SolutionNode *node, int offset);
 
 Solution *ls_init(SequenceList list) {
@@ -81,7 +81,7 @@ Solution *lsearch (SequenceList list) {
   Solution *sol;
   SolutionNode *node;
   Sequence *seq;
-  int val, val1, val2, min, better;
+  int val, pos, val1, val2, min, better;
   int start, end;
   int offsetmin, offsetmax;
   int offset, best_offset;
@@ -102,17 +102,19 @@ Solution *lsearch (SequenceList list) {
 	if(i < seq->len) {
 	  count++;
 	  node = sol->node_tbl[seqno][i];
+          pos = node->pos;
+
           if (i > 0) 
-	    offsetmin = sol->node_tbl[seqno][i - 1]->pos - node->pos + 1;
-          else offsetmin = -node->pos;
+	    offsetmin = sol->node_tbl[seqno][i - 1]->pos - pos + 1;
+          else offsetmin = -pos;
           if ((seq->len - i) > 1) 
-	    offsetmax = sol->node_tbl[seqno][i + 1]->pos - node->pos - 1;
-          else offsetmax = sol->sol_len - node->pos - 1;
+	    offsetmax = sol->node_tbl[seqno][i + 1]->pos - pos - 1;
+          else offsetmax = sol->sol_len - pos - 1;
  
 	  offset = offsetmin;
 	  while (offset <= offsetmax) {
 	    if (offset != 0) {
-              val1 = ls_localchange (sol, node, offset, &start, &end);
+              val1 = ls_localchange (sol, pos, offset, &start, &end);
               val2 = ls_evaluate (sol, start, end, NULL);
 
               val = val1 - val2;
@@ -125,8 +127,8 @@ Solution *lsearch (SequenceList list) {
 	  }
 
 	  if (min < 0) {
-            ls_localchange (sol, node, best_offset, &start, &end);
-	    ls_shift (sol, node, best_offset);
+            ls_localchange (sol, pos, best_offset, &start, &end);
+	    ls_shift (sol, pos, best_offset);
 	    ls_compress (sol, start, end);
             better = 1;
 	  }
@@ -155,75 +157,73 @@ int check_solution (Solution *sol) {
   return 1;
 }
 
-int localchangeable (Solution *sol, SolutionNode *node, int offset) {
-  return (node && offset != 0 && 
-	  node->pos >= 0 && node->pos < sol->sol_len && 
-	  node->pos + offset >= 0 && node->pos + offset <= sol->sol_len); 
+int localchangeable (Solution *sol, int pos, int offset) {
+  return (offset && 
+	  pos >= 0 && pos < sol->sol_len && 
+	  pos + offset >= 0 && pos + offset < sol->sol_len); 
 } 
 
-int ls_localchange (Solution *sol, SolutionNode *node, int offset, int *start, int *end) {
-  if (!localchangeable (sol, node, offset)) return 0; 
+int ls_localchange (Solution *sol, int pos, int offset, int *start, int *end) {
+  if (!localchangeable (sol, pos, offset)) return 0; 
 
-  SolutionNode *node2, *victim;
+  SolutionNode *node;
   int *touchtable;
   int ptr, sym;
   int count = 0;
 
-  victim = sol->sol[node->pos + offset];
-
   if (offset > 0) {
-    if (node->pos) 
-      *start = node->prev->block->pos;
-    else *start = node->block->pos; 
+    if (pos) 
+      *start = sol->sol[pos - 1]->block->pos;
+    else *start = sol->sol[pos]->block->pos; 
     
-    *end = node->pos + offset;
+    *end = pos + offset;
   } else { 
-    if (victim->pos) 
-      *start = victim->prev->block->pos;
-    else *start = victim->block->pos;
+    if (pos + offset) 
+      *start = sol->sol[pos + offset - 1]->block->pos;
+    else *start = sol->sol[pos + offset]->block->pos;
     
-    *end = node->pos;
+    *end = pos;
   }
 
-  ls_shift (sol, node, offset);
+  ls_shift (sol, pos, offset);
 
   touchtable = (int*) malloc (sol->seqs * sizeof(int));
-  node2 = sol->sol[*start]; ptr = *start;
-  while (node2 && 
+  node = sol->sol[*start]; ptr = *start;
+  while (node && 
 	 (ptr <= *end || 
-	  ptr != node2->block->pos)) {
-    sym = node2->seq->seq[node2->index];
+	  ptr != node->block->pos)) {
+    sym = node->seq->seq[node->index];
     count++;
 
     memset (touchtable, 0, sol->seqs * sizeof(int));
-    touchtable[node2->seqno] = 1; 
+    touchtable[node->seqno] = 1; 
  
     do {
-      if (++ptr < sol->sol_len) node2 = sol->sol[ptr]; 
-      else node2 = NULL;
-    } while(node2 &&
-	    node2->seq->seq[node2->index] == sym && 
-	    !touchtable[node2->seqno]++);
+      if (++ptr < sol->sol_len) node = sol->sol[ptr]; 
+      else node = NULL;
+    } while(node &&
+	    node->seq->seq[node->index] == sym && 
+	    !touchtable[node->seqno]++);
   }
 
-  if (node2) *end = ptr - 1;
+  if (node) *end = ptr - 1;
   else *end = sol->sol_len - 1;
 
-  ls_shift (sol, node, -offset);
+  ls_shift (sol, pos + offset, -offset);
 
   free(touchtable);
 
   return count;
 }
 
-int ls_shift (Solution *sol, SolutionNode *node, int offset) {
-  if (!localchangeable (sol, node, offset)) return 0;
+int ls_shift (Solution *sol, int pos, int offset) {
+  if (!localchangeable (sol, pos, offset)) return 0;
 
-  SolutionNode *victim, *prev, *next;
+  SolutionNode *node, *victim, *prev, *next;
   int i;
 
+  node = sol->sol[pos];
   prev = node->prev; next = node->next;
- 
   victim = node;
 
   if (offset < 0) {
@@ -240,8 +240,8 @@ int ls_shift (Solution *sol, SolutionNode *node, int offset) {
     node->next = victim->next;
   }
 
-  node->pos = node->pos + offset;
-  sol->sol[node->pos] = node;
+  node->pos = pos + offset;
+  sol->sol[pos + offset] = node;
 
   if (prev) prev->next = next;
   if (next) next->prev = prev;
@@ -337,7 +337,7 @@ void ls_compress (Solution *sol, int start, int end) {
 	    !touchtable[node->seqno]++);
   }
 
-  if (!check_solution (sol)) printf("Invalid!\n");
+  //if (!check_solution (sol)) printf("Invalid!\n");
 
   free(touchtable);
 }
