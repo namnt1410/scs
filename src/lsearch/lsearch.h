@@ -16,7 +16,6 @@ typedef struct SolutionNode {
   int index;
   Sequence *seq;
   SolutionBlock *block;
-  struct SolutionNode *prev, *next;
 } SolutionNode;
 
 typedef struct SolutionBlock {
