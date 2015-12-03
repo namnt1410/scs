@@ -10,7 +10,7 @@ Solution *ls_init(SequenceList list);
 void ls_compress (Solution *sol, int start, int end);
 int ls_localchange (Solution *sol, SolutionNode *node, int offset, int *start, int *end);
 int ls_shift (Solution *sol, SolutionNode *node, int offset);
-//int ls_exchange (Solution *sol, SolutionNode *node, int offset);
+int ls_exchange (Solution *sol, SolutionNode *node, int offset);
 
 Solution *ls_init(SequenceList list) {
   Solution *sol;
