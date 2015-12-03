@@ -155,14 +155,14 @@ int check_solution (Solution *sol) {
   return 1;
 }
 
-int changeable_node (Solution *sol, SolutionNode *node, int offset) {
+int localchangeable (Solution *sol, SolutionNode *node, int offset) {
   return (node && offset != 0 && 
 	  node->pos >= 0 && node->pos < sol->sol_len && 
 	  node->pos + offset >= 0 && node->pos + offset <= sol->sol_len); 
 } 
 
 int ls_localchange (Solution *sol, SolutionNode *node, int offset, int *start, int *end) {
-  if (!changeable_node (sol, node, offset)) return 0; 
+  if (!localchangeable (sol, node, offset)) return 0; 
 
   SolutionNode *node2, *victim;
   int *touchtable;
@@ -217,7 +217,7 @@ int ls_localchange (Solution *sol, SolutionNode *node, int offset, int *start, i
 }
 
 int ls_shift (Solution *sol, SolutionNode *node, int offset) {
-  if (!changeable_node (sol, node, offset)) return 0;
+  if (!localchangeable (sol, node, offset)) return 0;
 
   SolutionNode *victim, *prev, *next;
   int i;
@@ -255,7 +255,7 @@ int ls_shift (Solution *sol, SolutionNode *node, int offset) {
 }
 
 int ls_exchange (Solution *sol, SolutionNode *node, int offset) {
-  if (!changeable_node (sol, node, offset)) return 0;
+  if (!localchangeable (sol, node, offset)) return 0;
 
   SolutionNode *victim;
   SolutionNode *left, *right, *prev, *next;
