@@ -5,6 +5,7 @@
 #include "lsearch.h"
 
 static int loop = 0;
+SolutionNode **sol_tmp;
 
 Solution *ls_init(SequenceList list);
 void ls_compress (Solution *sol, int start, int end);
@@ -44,6 +45,7 @@ Solution *ls_init(SequenceList list) {
   } 
 
   sol->sol = (SolutionNode **) malloc (sizeof(SolutionNode *) * sol->sol_len);
+  sol_tmp = (SolutionNode **) malloc (sizeof(SolutionNode *) * sol->sol_len);
 
   sol->block_tbl = 
     (SolutionBlock **) malloc (sol->sol_len * sizeof(SolutionBlock *));
@@ -213,27 +215,27 @@ int ls_localchange (Solution *sol, int pos, int offset, int *start, int *end) {
 int ls_shift (Solution *sol, int pos, int offset) {
   if (!localchangeable (sol, pos, offset)) return 0;
 
-  SolutionNode *node, *victim;
+  SolutionNode *node;
   int i;
+  int n = offset > 0 ? offset : -offset;  
 
   node = sol->sol[pos];
-  victim = node;
 
   if (offset < 0) {
-    for (i = 0; i > offset; i--) { 
-      sol->sol[pos + i] = sol->sol[pos + i - 1];
-      sol->sol[pos + i]->pos = pos + i;
-    }
+    memcpy (sol_tmp, &(sol->sol[pos + offset]), (n * sizeof (SolutionNode*)));
+    memcpy (&(sol->sol[pos + offset + 1]), sol_tmp, (n * sizeof (SolutionNode*))); 
+    
+    for (i = 0; i > offset; i--) sol->sol[pos + i]->pos = pos + i;
   } else if (offset > 0) {
-    for (i = 0; i < offset; i++) {
-      sol->sol[pos + i] = sol->sol[pos + i + 1];
-      sol->sol[pos + i]->pos = pos + i;
-    }
+    memcpy (sol_tmp, &(sol->sol[pos + 1]), n * sizeof (SolutionNode*));
+    memcpy (&(sol->sol[pos]), sol_tmp, n * sizeof (SolutionNode*)); 
+    
+    for (i = 0; i < offset; i++) sol->sol[pos + i]->pos = pos + i;
   }
 
   node->pos = pos + offset;
   sol->sol[pos + offset] = node;
-
+  
   //if (!check_solution (sol)) printf("Invalid!\n");
 
   return 1;
