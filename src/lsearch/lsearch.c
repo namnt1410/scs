@@ -38,8 +38,6 @@ Solution *ls_init(SequenceList list) {
       node->index = i;
       node->seq = seq;
       node->block = NULL;
-
-      node->prev = NULL; node->next = NULL;
     }
 
     seq = seq->next; seqno++; 
@@ -60,10 +58,6 @@ Solution *ls_init(SequenceList list) {
       if (i < seq->len) {
         count++;
         node = sol->node_tbl[seqno][i];
-        if (pos) {
-          node->prev = sol->sol[pos - 1];
-          node->prev->next = node;
-        }
         node->pos = pos++;
         sol->sol[node->pos] = node;
       }
@@ -219,37 +213,28 @@ int ls_localchange (Solution *sol, int pos, int offset, int *start, int *end) {
 int ls_shift (Solution *sol, int pos, int offset) {
   if (!localchangeable (sol, pos, offset)) return 0;
 
-  SolutionNode *node, *victim, *prev, *next;
+  SolutionNode *node, *victim;
   int i;
 
   node = sol->sol[pos];
-  prev = node->prev; next = node->next;
   victim = node;
 
   if (offset < 0) {
     for (i = 0; i > offset; i--) { 
-      victim = victim->prev; sol->sol[++victim->pos] = victim;
+      sol->sol[pos + i] = sol->sol[pos + i - 1];
+      sol->sol[pos + i]->pos = pos + i;
     }
-    node->prev = victim->prev;
-    node->next = victim;
   } else if (offset > 0) {
     for (i = 0; i < offset; i++) {
-      victim = victim->next; sol->sol[--victim->pos] = victim;
+      sol->sol[pos + i] = sol->sol[pos + i + 1];
+      sol->sol[pos + i]->pos = pos + i;
     }
-    node->prev = victim;
-    node->next = victim->next;
   }
 
   node->pos = pos + offset;
   sol->sol[pos + offset] = node;
 
-  if (prev) prev->next = next;
-  if (next) next->prev = prev;
-
-  if(node->prev) node->prev->next = node;
-  if(node->next) node->next->prev = node;
-
-  if (!check_solution (sol)) printf("Invalid!\n");
+  //if (!check_solution (sol)) printf("Invalid!\n");
 
   return 1;
 }
