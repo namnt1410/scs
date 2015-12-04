@@ -216,8 +216,7 @@ int ls_shift (Solution *sol, int pos, int offset) {
   if (!localchangeable (sol, pos, offset)) return 0;
 
   SolutionNode *node;
-  int i;
-  int n = offset > 0 ? offset : -offset;  
+  int i, n = offset > 0 ? offset : -offset;  
 
   node = sol->sol[pos];
 
