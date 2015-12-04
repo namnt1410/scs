@@ -42,8 +42,8 @@ int mmerge(Sequence **seq, int n, int *alphabet, int alpha_len, int (*majority)(
     count[nextval] = 0; wsum[nextval] = 0;
     for(i = 0; i < m; i++) {
       j = index[nextval][i];
-      if(seq[j]->offset < seq[j]->len) {
-        k = get_serial (seq[j]->seq[++seq[j]->offset], alphabet, alpha_len);
+      if(++seq[j]->offset < seq[j]->len) {
+        k = get_serial (seq[j]->seq[seq[j]->offset], alphabet, alpha_len);
         index[k][count[k]++] = j;
         wsum[k] += (seq[j]->len - seq[j]->offset); 
       }
