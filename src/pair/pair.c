@@ -39,8 +39,10 @@ int scs_pair(int *seq1, int len1, int *seq2, int len2, int *super) {
     }  
 
   len = 0;
-  for(lp = &lnk[0][0]; lp != &lnk[len2][len1]; lp = lp->next)
-    super[len++] = lp->sym;
+  for(lp = &lnk[0][0]; lp != &lnk[len2][len1]; lp = lp->next) {
+    if(super) super[len] = lp->sym;
+    len++;
+  }
 
   for (i = 0; i < len2 + 1; i++) free(lnk[i]);
   free(lnk);

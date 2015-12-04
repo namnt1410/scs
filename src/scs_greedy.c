@@ -29,7 +29,7 @@ int scs_greedy(SequenceList list, int *super) {
   }
 
   for(i = 0; i < n; i++) 
-    for(j = 0; j < i; j++) super_len[i][j] = scs_pair(seq[i]->seq, seq[i]->len, seq[j]->seq, seq[j]->len, out);
+    for(j = 0; j < i; j++) super_len[i][j] = scs_pair(seq[i]->seq, seq[i]->len, seq[j]->seq, seq[j]->len, NULL);
     
   while(n > 1) { 
     min = MAX_LEN;
@@ -58,7 +58,7 @@ int scs_greedy(SequenceList list, int *super) {
     seq[n - 2] = create_sequence(out, len);
 
     for(i = 0; i < n - 2; i++) 
-      super_len[n - 2][i] = scs_pair(seq[n - 2]->seq, seq[n - 2]->len, seq[i]->seq, seq[i]->len, out);
+      super_len[n - 2][i] = scs_pair(seq[n - 2]->seq, seq[n - 2]->len, seq[i]->seq, seq[i]->len, NULL);
 
     n--;
   } 
