@@ -5,7 +5,7 @@
 
 #include "block.h"
 
-#define MAX_LEN		10000
+#define MAX_LEN		100000
 
 Block *make_block(int sym) {
   Block *new;

@@ -4,8 +4,6 @@
 
 #include "mmerge.h"
 
-#define MAX_LEN 10000
-
 int mmerge(Sequence **seq, int n, int *alphabet, int alpha_len, int (*majority)(Sequence **, int, int *, int, int *, int **, int *), int *super) {
   int* count;
   int** index;
@@ -29,7 +27,6 @@ int mmerge(Sequence **seq, int n, int *alphabet, int alpha_len, int (*majority)(
       index[j][count[j]] = i;
       count[j]++;
       wsum[j] += (seq[i]->len - seq[i]->offset);
-      //printf("wsum: %d\n", wsum[j]);
     }
   } 
 

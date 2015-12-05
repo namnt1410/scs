@@ -3,13 +3,12 @@
 
 #include "sequence.h"
 
-#define MAX_LEN 	10000
+#define MAX_ALPHABET_SIZE	10000
 
 int scs_alpha(SequenceList list, int *alphabet, int alpha_len, int *super);
 int scs_greedy(SequenceList list, int *super);
 int scs_reduce_expand(SequenceList list, int *super);
 int scs_mmerge(SequenceList list, int *alphabet, int alpha_len, int *super);
-/*char* scs_graph(SequenceList list, char* alphabet);*/
 int scs_lsearch(SequenceList list, int *super);
 
 #endif

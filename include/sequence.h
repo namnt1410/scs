@@ -1,6 +1,8 @@
 #ifndef __SEQUENCE_H__
 #define __SEQUENCE_H__
 
+#define MAX_LEN 	100000
+
 typedef struct Sequence_t {
   int *seq;
   int len;

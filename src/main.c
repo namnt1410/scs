@@ -8,10 +8,10 @@
 
 int main(int argc, char **argv) {
   SequenceList list;
-  int alphabet[1000];
+  int alphabet[MAX_ALPHABET_SIZE];
   int i;
   int arg_size, arg_min, arg_max, alpha_len;
-  int super[10000];
+  int super[MAX_LEN];
   int len;
 
   if (strcmp(argv[1], "r") == 0 && argc >= 3) {
@@ -40,7 +40,7 @@ int main(int argc, char **argv) {
 
   printf("Elapsed time: %lf ms\n", time_spent * 1000);
 
-  /*begin = clock();
+  begin = clock();
 
   len = scs_greedy(list, super);
   printf("greedy: %d %d\n", len, check_common_supersequence(list, super, len));
@@ -49,12 +49,23 @@ int main(int argc, char **argv) {
 
   time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
 
-  printf("Elapsed time: %lf ms\n", time_spent * 1000);*/
+  printf("Elapsed time: %lf ms\n", time_spent * 1000);
 
   begin = clock();
 
   len = scs_lsearch(list, super);
   printf("lsearch: %d %d\n", len, check_common_supersequence(list, super, len));
+ 
+  end = clock();
+
+  time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
+
+  printf("Elapsed time: %lf ms\n", time_spent * 1000);
+
+  begin = clock();
+
+  len = scs_reduce_expand(list, super);
+  printf("reduce: %d %d\n", len, check_common_supersequence(list, super, len));
  
   end = clock();
 
