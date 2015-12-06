@@ -21,6 +21,7 @@ typedef struct SolutionNode {
 typedef struct SolutionBlock {
   int pos;
   int len;
+  SolutionBlock *next;
 } SolutionBlock;
 
 typedef struct Solution {

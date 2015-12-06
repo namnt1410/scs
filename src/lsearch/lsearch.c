@@ -100,12 +100,8 @@ Solution *lsearch (SequenceList list) {
 	  node = sol->node_tbl[seqno][i];
           pos = node->pos;
 
-          if (i > 0) 
-	    offsetmin = sol->node_tbl[seqno][i - 1]->pos - pos + 1;
-          else offsetmin = -pos;
-          if ((seq->len - i) > 1) 
-	    offsetmax = sol->node_tbl[seqno][i + 1]->pos - pos - 1;
-          else offsetmax = sol->sol_len - pos - 1;
+	  offsetmin =  i > 0 ? sol->node_tbl[seqno][i - 1]->pos - pos + 1 : -pos;
+	  offsetmax = (seq->len - i) > 1 ? sol->node_tbl[seqno][i + 1]->pos - pos - 1 : sol->sol_len - pos - 1;
  
 	  offset = offsetmin;
 	  while (offset <= offsetmax) {
@@ -168,18 +164,12 @@ int ls_localchange (Solution *sol, int pos, int offset, int *start, int *end) {
   int count = 0;
 
   if (offset > 0) {
-    if (pos) 
-      *start = sol->sol[pos - 1]->block->pos;
-    else *start = sol->sol[pos]->block->pos; 
-    
-    *end = pos + offset;
-  } else { 
-    if (pos + offset) 
-      *start = sol->sol[pos + offset - 1]->block->pos;
-    else *start = sol->sol[pos + offset]->block->pos;
-    
-    *end = pos;
+    *start = pos ? sol->sol[pos - 1]->block->pos : sol->sol[pos]->block->pos;
+  } else {
+    *start = pos + offset ? sol->sol[pos + offset - 1]->block->pos : sol->sol[pos + offset]->block->pos;
   }
+
+  *end = offset > 0 ? pos + offset : pos;
 
   ls_shift (sol, pos, offset);
 
@@ -314,9 +304,9 @@ void ls_compress (Solution *sol, int start, int end) {
     } while(node && pos <= end &&
 	    node->seq->seq[node->index] == sym && 
 	    !touchtable[node->seqno]++);
-  }
 
-  //if (!check_solution (sol)) printf("Invalid!\n");
+    block->next = node ? sol->block_tbl[pos] : NULL;
+  }
 
   free(touchtable);
 }
