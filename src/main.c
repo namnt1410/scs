@@ -29,7 +29,7 @@ int main(int argc, char **argv) {
   clock_t begin, end;
   double time_spent;
 
-  begin = clock();
+  /*begin = clock();
 
   len = scs_mmerge(list, alphabet, alpha_len, super);
   printf("mmerge: %d %d\n", len, check_common_supersequence(list, super, len));
@@ -49,7 +49,7 @@ int main(int argc, char **argv) {
 
   time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
 
-  printf("Elapsed time: %lf ms\n", time_spent * 1000);
+  printf("Elapsed time: %lf ms\n", time_spent * 1000);*/
 
   begin = clock();
 
@@ -62,7 +62,7 @@ int main(int argc, char **argv) {
 
   printf("Elapsed time: %lf ms\n", time_spent * 1000);
 
-  begin = clock();
+  /*begin = clock();
 
   len = scs_reduce_expand(list, super);
   printf("reduce: %d %d\n", len, check_common_supersequence(list, super, len));
@@ -71,7 +71,7 @@ int main(int argc, char **argv) {
 
   time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
 
-  printf("Elapsed time: %lf ms\n", time_spent * 1000);
+  printf("Elapsed time: %lf ms\n", time_spent * 1000);*/
 
   //free_list(&list);
 
