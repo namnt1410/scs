@@ -11,7 +11,7 @@ Solution *ls_init(SequenceList list);
 void ls_compress (Solution *sol, int start, int end);
 int ls_localchange (Solution *sol, int pos, int offset, int *start, int *end);
 int ls_shift (Solution *sol, int pos, int offset);
-//int ls_exchange (Solution *sol, SolutionNode *node, int offset);
+int ls_exchange (Solution *sol, int pos, int offset);
 
 Solution *ls_init(SequenceList list) {
   Solution *sol;
@@ -100,8 +100,9 @@ Solution *lsearch (SequenceList list) {
 	  node = sol->node_tbl[seqno][i];
           pos = node->pos;
 
-	  offsetmin =  i > 0 ? sol->node_tbl[seqno][i - 1]->pos - pos + 1 : -pos;
-	  offsetmax = (seq->len - i) > 1 ? sol->node_tbl[seqno][i + 1]->pos - pos - 1 : sol->sol_len - pos - 1;
+	  offsetmin = i > 0 ? sol->node_tbl[seqno][i - 1]->pos - pos + 1 : -pos;
+	  offsetmax = i + 1 < seq->len ? 
+	    sol->node_tbl[seqno][i + 1]->pos - pos - 1 : sol->sol_len - pos - 1;
  
 	  offset = offsetmin;
 	  while (offset <= offsetmax) {
@@ -166,7 +167,8 @@ int ls_localchange (Solution *sol, int pos, int offset, int *start, int *end) {
   if (offset > 0) {
     *start = pos ? sol->sol[pos - 1]->block->pos : sol->sol[pos]->block->pos;
   } else {
-    *start = pos + offset ? sol->sol[pos + offset - 1]->block->pos : sol->sol[pos + offset]->block->pos;
+    *start = pos + offset ? 
+      sol->sol[pos + offset - 1]->block->pos : sol->sol[pos + offset]->block->pos;
   }
 
   *end = offset > 0 ? pos + offset : pos;
@@ -222,57 +224,23 @@ int ls_shift (Solution *sol, int pos, int offset) {
   return 1;
 }
 
-/*int ls_exchange (Solution *sol, SolutionNode *node, int offset) {
-  if (!localchangeable (sol, node, offset)) return 0;
+int ls_exchange (Solution *sol, int pos, int offset) {
+  if (!localchangeable (sol, pos, offset)) return 0;
 
-  SolutionNode *victim;
-  SolutionNode *left, *right, *prev, *next;
-  int pos1, pos2;
-  int i;
+  SolutionNode *node, *left, *right;
  
-  victim = node;
+  node = sol->sol[pos + offset]; 
+  left = node->index ? sol->node_tbl[node->seqno][node->index - 1] : NULL;
+  right = node->index + 1 < node->seq->len ? sol->node_tbl[node->seqno][node->index + 1] : NULL;
 
-  if (offset < 0) {
-    for (i = 0; i > offset; i--) 
-      victim = victim->prev;
-    if ((victim->seq->len - victim->index) > 1 && 
-	sol->node_tbl[victim->seqno][victim->index + 1]->pos < node->pos) 
-      return 0;
-    left = victim; right = node;
-  } else if (offset > 0) {
-    for (i = 0; i < offset; i++) 
-      victim = victim->next;
-    if (victim->index && 
-	sol->node_tbl[victim->seqno][victim->index - 1]->pos > node->pos) 
-      return 0;
-    left = node; right = victim; 
-  }
+  if ((offset < 0 && right && right->pos < pos) || 
+      (offset > 0 && left && left->pos > pos)) 
+    return 0;
 
-  pos1 = left->pos; pos2 = right->pos;
-
-  prev = right->prev;
-  right->prev = left->prev;
-  if (right->prev) right->prev->next = right;
-
-  next = left->next;
-  left->next = right->next;
-  if (right->next) right->next->prev = left;
-
-  if (left == prev) {
-    right->next = left;
-    left->prev = right;
-  } else {
-    right->next = next;
-    next->prev = right;
-    left->prev = prev;
-    prev->next = left;
-  } 
-
-  right->pos = pos1; sol->sol[pos1] = right; 
-  left->pos = pos2; sol->sol[pos2] = left;
+  sol->sol[pos + offset] = sol->sol[pos]; sol->sol[pos] = node;
 
   return 1;
-}*/ 
+} 
 
 void ls_compress (Solution *sol, int start, int end) {
   if (start >= end || start < 0 || end >= sol->sol_len) return;
