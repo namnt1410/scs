@@ -77,7 +77,7 @@ Solution *lsearch (SequenceList list) {
   Solution *sol;
   SolutionNode *node;
   Sequence *seq;
-  int val, pos, val1, val2, min, better;
+  int pos, val, change, min, better;
   int start, end;
   int offsetmin, offsetmax;
   int offset, best_offset;
@@ -107,19 +107,19 @@ Solution *lsearch (SequenceList list) {
 	  offset = offsetmin;
 	  while (offset <= offsetmax) {
 	    if (offset != 0) {
-              val1 = ls_localchange (sol, pos, offset, &start, &end);
-              val2 = ls_evaluate (sol, start, end, NULL);
-
-              val = val1 - val2;
-              if (val < min) {
-                min = val;
-                best_offset = offset;
+              val = ls_localchange (sol, pos, offset, &start, &end);
+              if (val) {
+                change = val - ls_evaluate (sol, start, end, NULL);
+                if (change < min) {
+                  min = change;
+                  best_offset = offset;
+                }
               } 
 	    }
 	    offset++;
 	  }
 
-	  if (min < 0) {
+	  if (best_offset) {
             ls_localchange (sol, pos, best_offset, &start, &end);
 	    ls_shift (sol, pos, best_offset);
 	    ls_compress (sol, start, end);
@@ -170,7 +170,7 @@ int ls_localchange (Solution *sol, int pos, int offset, int *start, int *end) {
 
   *start = lo ? sol->sol[lo - 1]->block->pos : sol->sol[lo]->block->pos;
 
-  ls_shift (sol, pos, offset);
+  if (!ls_shift (sol, pos, offset)) return 0;
 
   touchtable = (int*) malloc (sol->seqs * sizeof(int));
   node = sol->sol[*start]; ptr = *start;
