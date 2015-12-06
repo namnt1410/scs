@@ -162,6 +162,7 @@ int ls_localchange (Solution *sol, int pos, int offset, int *start, int *end) {
   SolutionNode *node;
   int *touchtable;
   int ptr, sym;
+  int marker;
   int count = 0;
 
   if (offset > 0) {
@@ -171,14 +172,14 @@ int ls_localchange (Solution *sol, int pos, int offset, int *start, int *end) {
       sol->sol[pos + offset - 1]->block->pos : sol->sol[pos + offset]->block->pos;
   }
 
-  *end = offset > 0 ? pos + offset : pos;
+  marker = offset > 0 ? pos + offset : pos;
 
   ls_shift (sol, pos, offset);
 
   touchtable = (int*) malloc (sol->seqs * sizeof(int));
   node = sol->sol[*start]; ptr = *start;
   while (node && 
-	 (ptr <= *end || 
+	 (ptr <= marker || 
 	  ptr != node->block->pos)) {
     sym = node->seq->seq[node->index];
     count++;
