@@ -192,8 +192,7 @@ int ls_localchange (Solution *sol, int pos, int offset, int *start, int *end) {
 	    !touchtable[node->seqno]++);
   }
 
-  if (node) *end = ptr - 1;
-  else *end = sol->sol_len - 1;
+  *end = node ? ptr - 1 : sol->sol_len - 1;
 
   ls_shift (sol, pos + offset, -offset);
 
