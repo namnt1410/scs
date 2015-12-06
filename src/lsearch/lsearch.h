@@ -4,7 +4,7 @@
 #include "sequence.h"
 
 #define LC_TYPE_SHIFT		0
-#define LC_TYPE_EXCHANGE	1
+#define LC_TYPE_EXCH		1
 
 typedef struct SolutionNode SolutionNode;
 typedef struct SolutionBlock SolutionBlock;
