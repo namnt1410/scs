@@ -84,7 +84,7 @@ Solution *lsearch (SequenceList list) {
   int i, count, seqno, m = 0; 
 
   sol = ls_init(list);
-  ls_compress (sol, 0, sol->sol_len - 1);
+  ls_compress (sol, 0, sol->sol_len);
 
   do {
     loop++;
@@ -195,7 +195,7 @@ int ls_localchange (Solution *sol, int pos, int offset, int *start, int *end) {
 	    !touchtable[node->seqno]++);
   }
 
-  *end = node ? ptr - 1 : sol->sol_len - 1;
+  *end = node ? ptr : sol->sol_len;
 
   ls_shift (sol, pos + offset, -offset);
 
@@ -244,7 +244,7 @@ int ls_exchange (Solution *sol, int pos, int offset) {
 } 
 
 void ls_compress (Solution *sol, int start, int end) {
-  if (start >= end || start < 0 || end >= sol->sol_len) return;
+  if (start >= end || start < 0 || end > sol->sol_len) return;
 
   SolutionNode *node;
   int *touchtable;
@@ -253,7 +253,7 @@ void ls_compress (Solution *sol, int start, int end) {
 
   touchtable = (int*) malloc (sol->seqs * sizeof(int));
   node = sol->sol[start]; pos = start;
-  while (node && pos <= end) {
+  while (node && pos < end) {
     memset (touchtable, 0, sol->seqs * sizeof(int));
 
     block = sol->block_tbl[pos];
@@ -278,14 +278,14 @@ void ls_compress (Solution *sol, int start, int end) {
 }
 
 int ls_evaluate (Solution *sol, int start, int end, int *seq) {
-  if (start >= end || start < 0 || end >= sol->sol_len) 
+  if (start >= end || start < 0 || end > sol->sol_len) 
     return 0;
  
   int pos, val = 0;
 
   pos = start;
 
-  while (pos <= end) {
+  while (pos < end) {
     if (seq) seq[val] = sol->sol[pos]->seq->seq[sol->sol[pos]->index];
     val++;
     pos += sol->sol[pos]->block->len;
