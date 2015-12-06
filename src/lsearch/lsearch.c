@@ -272,8 +272,6 @@ void ls_compress (Solution *sol, int start, int end) {
     } while(node && pos <= end &&
 	    node->seq->seq[node->index] == sym && 
 	    !touchtable[node->seqno]++);
-
-    block->next = node ? sol->block_tbl[pos] : NULL;
   }
 
   free(touchtable);
@@ -283,21 +281,14 @@ int ls_evaluate (Solution *sol, int start, int end, int *seq) {
   if (start >= end || start < 0 || end >= sol->sol_len) 
     return 0;
  
-  SolutionNode *node;
-  int i, val = 1;
-  int sym;
+  int pos, val = 0;
 
-  node = sol->sol[start];
-  sym = node->seq->seq[node->index];
-  if (seq) seq[0] = sym;
+  pos = start;
 
-  for (i = start; i < end; i++) {
-    if (sol->sol[i]->block != sol->sol[i + 1]->block) {
-      node = sol->sol[i + 1];
-      sym = node->seq->seq[node->index];
-      if (seq) seq[val] = sym;
-      val++;
-    }
+  while (pos <= end) {
+    if (seq) seq[val] = sol->sol[pos]->seq->seq[sol->sol[pos]->index];
+    val++;
+    pos += sol->sol[pos]->block->len;
   }
 
   return val;
