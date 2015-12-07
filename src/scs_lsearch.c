@@ -12,8 +12,8 @@ int scs_lsearch (SequenceList list, int *super) {
   sol = lsearch(list); 
   int val = ls_evaluate (sol, 0, sol->sol_len, super);
 
-  printf("val: %d\n", val);
-  printf("check: %d\n", check_common_supersequence(list, super, val));
+  //printf("val: %d\n", val);
+  //printf("check: %d\n", check_common_supersequence(list, super, val));
 
   return val;
 }

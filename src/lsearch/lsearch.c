@@ -5,11 +5,11 @@
 #include "lsearch.h"
 
 static int loop = 0;
-SolutionNode **sol_tmp;
+void *temp;
 
 Solution *ls_init(SequenceList list);
 void ls_compress (Solution *sol, int start, int end);
-int ls_localchange (Solution *sol, int pos, int offset, int *start, int *end);
+int ls_localchange (Solution *sol, int pos, int offset, int lc_type, int *start, int *end);
 int ls_shift (Solution *sol, int pos, int offset);
 int ls_exchange (Solution *sol, int pos, int offset);
 
@@ -45,7 +45,7 @@ Solution *ls_init(SequenceList list) {
   } 
 
   sol->sol = (SolutionNode **) malloc (sizeof(SolutionNode *) * sol->sol_len);
-  sol_tmp = (SolutionNode **) malloc (sizeof(SolutionNode *) * sol->sol_len);
+  temp = malloc (sol->sol_len * sizeof(SolutionNode*));
 
   sol->block_tbl = 
     (SolutionBlock **) malloc (sol->sol_len * sizeof(SolutionBlock *));
@@ -77,10 +77,10 @@ Solution *lsearch (SequenceList list) {
   Solution *sol;
   SolutionNode *node;
   Sequence *seq;
-  int val, pos, val1, val2, min, better;
+  int pos, val, change, min, better;
   int start, end;
   int offsetmin, offsetmax;
-  int offset, best_offset;
+  int offset, best_offset, best_type;
   int i, count, seqno, m = 0; 
 
   sol = ls_init(list);
@@ -107,21 +107,24 @@ Solution *lsearch (SequenceList list) {
 	  offset = offsetmin;
 	  while (offset <= offsetmax) {
 	    if (offset != 0) {
-              val1 = ls_localchange (sol, pos, offset, &start, &end);
-              val2 = ls_evaluate (sol, start, end, NULL);
-
-              val = val1 - val2;
-              if (val < min) {
-                min = val;
-                best_offset = offset;
+              val = ls_localchange (sol, pos, offset, 
+				    LC_TYPE_SHIFT, &start, &end);
+              if (val) {
+                change = val - ls_evaluate (sol, start, end, NULL);
+                if (change < min) {
+                  min = change;
+                  best_offset = offset;
+                  best_type = LC_TYPE_SHIFT;
+                }
               } 
 	    }
 	    offset++;
 	  }
 
-	  if (min < 0) {
-            ls_localchange (sol, pos, best_offset, &start, &end);
-	    ls_shift (sol, pos, best_offset);
+	  if (best_offset) {
+            ls_localchange (sol, pos, best_offset, best_type, &start, &end);
+	    best_type == LC_TYPE_EXCH ? ls_exchange (sol, pos, best_offset) : 
+	      ls_shift (sol, pos, best_offset);
 	    ls_compress (sol, start, end);
             better = 1;
 	  }
@@ -156,30 +159,27 @@ int localchangeable (Solution *sol, int pos, int offset) {
 	  pos + offset >= 0 && pos + offset < sol->sol_len); 
 } 
 
-int ls_localchange (Solution *sol, int pos, int offset, int *start, int *end) {
+int ls_localchange (Solution *sol, int pos, int offset, int lc_type, int *start, int *end) {
   if (!localchangeable (sol, pos, offset)) return 0; 
 
   SolutionNode *node;
   int *touchtable;
   int ptr, sym;
-  int marker;
+  int hi, lo;
   int count = 0;
 
-  if (offset > 0) {
-    *start = pos ? sol->sol[pos - 1]->block->pos : sol->sol[pos]->block->pos;
-  } else {
-    *start = pos + offset ? 
-      sol->sol[pos + offset - 1]->block->pos : sol->sol[pos + offset]->block->pos;
-  }
+  hi = offset > 0 ? pos + offset : pos;
+  lo = offset > 0 ? pos : pos + offset;
 
-  marker = offset > 0 ? pos + offset : pos;
+  *start = lo ? sol->sol[lo - 1]->block->pos : sol->sol[lo]->block->pos;
 
-  ls_shift (sol, pos, offset);
+  if ((lc_type == LC_TYPE_EXCH && !ls_exchange (sol, pos, offset)) || 
+      (lc_type == LC_TYPE_SHIFT && !ls_shift (sol, pos, offset))) return 0;
 
   touchtable = (int*) malloc (sol->seqs * sizeof(int));
   node = sol->sol[*start]; ptr = *start;
   while (node && 
-	 (ptr <= marker || 
+	 (ptr <= hi || 
 	  ptr != node->block->pos)) {
     sym = node->seq->seq[node->index];
     count++;
@@ -188,8 +188,7 @@ int ls_localchange (Solution *sol, int pos, int offset, int *start, int *end) {
     touchtable[node->seqno] = 1; 
  
     do {
-      if (++ptr < sol->sol_len) node = sol->sol[ptr]; 
-      else node = NULL;
+      node = (++ptr < sol->sol_len) ? sol->sol[ptr] : NULL;
     } while(node &&
 	    node->seq->seq[node->index] == sym && 
 	    !touchtable[node->seqno]++);
@@ -197,7 +196,8 @@ int ls_localchange (Solution *sol, int pos, int offset, int *start, int *end) {
 
   *end = node ? ptr : sol->sol_len;
 
-  ls_shift (sol, pos + offset, -offset);
+  lc_type == LC_TYPE_EXCH ? ls_exchange (sol, pos + offset, -offset) : 
+    ls_shift (sol, pos + offset, -offset);
 
   free(touchtable);
 
@@ -208,16 +208,16 @@ int ls_shift (Solution *sol, int pos, int offset) {
   if (!localchangeable (sol, pos, offset)) return 0;
 
   SolutionNode *node;
-  int n = offset > 0 ? offset : -offset;  
+  int n = offset > 0 ? offset : -offset; 
 
   node = sol->sol[pos];
 
   if (offset < 0) {
-    memcpy (sol_tmp, &(sol->sol[pos + offset]), (n * sizeof (SolutionNode*)));
-    memcpy (&(sol->sol[pos + offset + 1]), sol_tmp, (n * sizeof (SolutionNode*)));
+    memcpy (temp, &(sol->sol[pos + offset]), (n * sizeof (SolutionNode*)));
+    memcpy (&(sol->sol[pos + offset + 1]), temp, (n * sizeof (SolutionNode*)));
   } else if (offset > 0) {
-    memcpy (sol_tmp, &(sol->sol[pos + 1]), n * sizeof (SolutionNode*));
-    memcpy (&(sol->sol[pos]), sol_tmp, n * sizeof (SolutionNode*));
+    memcpy (temp, &(sol->sol[pos + 1]), n * sizeof (SolutionNode*));
+    memcpy (&(sol->sol[pos]), temp, n * sizeof (SolutionNode*));
   }
 
   sol->sol[pos + offset] = node;
@@ -267,9 +267,8 @@ void ls_compress (Solution *sol, int start, int end) {
       block->len++;
       node->block = block;
       node->pos = pos;
-      if (++pos < sol->sol_len) node = sol->sol[pos];
-      else node = NULL;
-    } while(node && pos <= end &&
+      node = ++pos < sol->sol_len ? sol->sol[pos] : NULL;
+    } while(node && pos < end &&
 	    node->seq->seq[node->index] == sym && 
 	    !touchtable[node->seqno]++);
   }
