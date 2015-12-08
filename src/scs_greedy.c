@@ -45,12 +45,12 @@ int scs_greedy(SequenceList list, int *super) {
 
     if(iy == n - 2) {
       seq[ix] = seq[n - 1];
-      for(i = 0; i < ix; i++) super_len[ix][i] = super_len[n - 1][i];
+      memcpy (&(super_len[ix][0]), &(super_len[n - 1][0]), ix * sizeof(int)); 
     } else {
       seq[ix] = seq[n - 2]; 
       seq[iy] = seq[n - 1];
-      for(i = 0; i < ix; i++) super_len[ix][i] = super_len[n - 2][i];
-      for(i = 0; i < iy; i++) super_len[iy][i] = super_len[n - 1][i];
+      memcpy (&(super_len[ix][0]), &(super_len[n - 2][0]), ix * sizeof(int)); 
+      memcpy (&(super_len[iy][0]), &(super_len[n - 1][0]), iy * sizeof(int)); 
     } 
 
     len = scs_pair(seq1->seq, seq1->len, seq2->seq, seq2->len, out);
