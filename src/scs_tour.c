@@ -51,8 +51,6 @@ int scs_tour(SequenceList list, int *super) {
           lock[minp] = 1;
           len = scs_pair(seq[i]->seq, seq[i]->len, seq[minp]->seq, seq[minp]->len, out);
           seq[m] = create_sequence (out, len);
-          //memcpy (seq[m]->seq, out, len * sizeof(int));
-          //seq[m]->len = len;
         } else seq[m] = seq[i];
 
         m++; 
