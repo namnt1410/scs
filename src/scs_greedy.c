@@ -67,14 +67,14 @@ int scs_greedy(SequenceList list, int *super) {
     if(iy == n - 2) {
       seq[ix] = seq[n - 1];
       memcpy (&(super_len[ix][0]), &(super_len[n - 1][0]), ix * sizeof(int)); 
-      index[ix] = index[n - 1] < ix ? index[n - 1] : min_elem (super_len[ix], ix);
+      index[ix] = index[n - 1] < ix ? index[n - 1] : min_elem (&(super_len[ix][0]), ix);
     } else {
       seq[ix] = seq[n - 2]; 
       seq[iy] = seq[n - 1];
       memcpy (&(super_len[ix][0]), &(super_len[n - 2][0]), ix * sizeof(int));
-      index[ix] = index[n - 2] < ix ? index[n - 2] : min_elem (super_len[ix], ix);
+      index[ix] = index[n - 2] < ix ? index[n - 2] : min_elem (&(super_len[ix][0]), ix);
       memcpy (&(super_len[iy][0]), &(super_len[n - 1][0]), iy * sizeof(int));
-      index[iy] = index[n - 1] < iy ? index[n - 1] : min_elem (super_len[iy], iy);
+      index[iy] = index[n - 1] < iy ? index[n - 1] : min_elem (&(super_len[iy][0]), iy);
     } 
 
     len = scs_pair(seq1->seq, seq1->len, seq2->seq, seq2->len, out);
@@ -84,7 +84,7 @@ int scs_greedy(SequenceList list, int *super) {
     for(i = 0; i < n - 2; i++) {
       super_len[n - 2][i] = scs_pair(seq[n - 2]->seq, seq[n - 2]->len, seq[i]->seq, seq[i]->len, NULL); 
     }
-    index[n - 2] = min_elem (super_len[n - 2], n - 2);
+    index[n - 2] = min_elem (&(super_len[n - 2][0]), n - 2);
 
     n--;
   } 
