@@ -3,38 +3,47 @@
 #include <string.h>
 #include <time.h>
 
-#include "fields.h"
-
 #include "input.h"
+
+#define MAX_LEN 100000
 
 SequenceList readsequences (char* filename, int *alphabet, int *alpha_len) {
   SequenceList list;
-  IS is;
+  FILE *fp;
   int *seq;
-  int sym;
-  int *tbl;
-  int len;
+  int *check;
+  int ch;
+  int len = 0;
 
-  is = new_inputstruct (filename);
-  seq = (int*) malloc (MAXLEN * sizeof(int)); 
-  tbl = (int*) calloc (128, sizeof(int));  
+  fp = fopen (filename, "r");
+
+  if (fp == NULL) {
+    printf ("input: Can't access data file!\n");
+    exit (0);
+  }
+
+  seq = (int*) malloc (MAX_LEN * sizeof(int)); 
+  check = (int*) calloc (128, sizeof(int));  
 
   *alpha_len = 0;
   list = NULL;
 
-  while(get_line(is) >= 0) {
-    len = 0; sym = is->text1[0];
-    while (sym != '\n') {
-      if (!tbl[sym]) {
-        tbl[sym] = 1; alphabet[(*alpha_len)++] = sym;
+  ch = fgetc(fp);
+  while(ch != EOF) {
+    if (ch != '\n') {
+      if (!check[ch]) {
+        check[ch] = 1; alphabet[(*alpha_len)++] = ch;
       }
-      seq[len++] = sym;
-      sym = is->text1[len];
+      seq[len++] = ch;
+    } else {
+      add_sequence(&list, seq, len);
+      len = 0;
     }
-    add_sequence(&list, seq, len);
+
+    ch = fgetc (fp);
   }
 
-  jettison_inputstruct (is);
+  fclose (fp);
 
   return list;
 }
@@ -47,8 +56,6 @@ SequenceList gensequences (int size, int min_len, int max_len, int alpha_len, in
 
   srand((unsigned) time(&t));
   printf("rand: %d\n", (rand() % 100));
-
-  //alphabet = (int*) malloc (alpha_len * sizeof(char));
   seq = (int*) malloc (max_len * sizeof(int));
 
   for (i = 0; i < alpha_len; i++) alphabet[i] = i;
