@@ -70,6 +70,18 @@ Solution *ls_init(SequenceList list) {
     i++;
   } while (count); 
 
+  /*pos = 0;
+  seq = list; seqno = 0;
+  while (seq) {
+    for (i = 0; i < seq->len; i++) {
+      node = sol->node_tbl[seqno][i];
+      node->pos = pos++;
+      sol->sol[node->pos] = node; 
+    }
+
+    seq = seq->next; seqno++;
+  }*/
+
   return sol;
 }
 
@@ -87,6 +99,52 @@ Solution *lsearch (SequenceList list) {
   ls_compress (sol, 0, sol->sol_len);
 
   do {
+    loop++;
+    better = 0;
+    seq = list; seqno = 0;
+    while(seq) {
+      for (i = 0; i < seq->len; i++) {
+        min = 0; best_offset = 0;
+	node = sol->node_tbl[seqno][i];
+        pos = node->pos;
+
+	offsetmin = i > 0 ? sol->node_tbl[seqno][i - 1]->pos - pos + 1 : -pos;
+	offsetmax = i + 1 < seq->len ? 
+	  sol->node_tbl[seqno][i + 1]->pos - pos - 1 : sol->sol_len - pos - 1;
+ 
+	offset = offsetmin;
+	while (offset <= offsetmax) {
+	  if (offset != 0) {
+	    val = ls_localchange (sol, pos, offset, 
+				  LC_TYPE_SHIFT, &start, &end);
+	    if (val) {
+	      change = val - ls_evaluate (sol, start, end, NULL);
+	      if (change <= min) {
+		min = change;
+		best_offset = offset;
+		best_type = LC_TYPE_SHIFT;
+	      }
+	    } 
+	  }
+	  offset++;
+	}
+
+	if (best_offset) {
+	  ls_localchange (sol, pos, best_offset, best_type, &start, &end);
+	  best_type == LC_TYPE_EXCH ? ls_exchange (sol, pos, best_offset) : 
+	    ls_shift (sol, pos, best_offset);
+	  ls_compress (sol, start, end);
+	  better = 1;
+	}
+      }
+
+      seq = seq->next; seqno++;
+    }
+  } while (better && loop <= 20);
+
+  printf ("loop: %d\n", loop);
+
+  /*do {
     loop++;
     better = 0;
     i = 0;
@@ -138,7 +196,7 @@ Solution *lsearch (SequenceList list) {
     m++;
   } while (better);
 
-  printf ("loop: %d\n", loop);
+  printf ("loop: %d\n", loop);*/
 
   return sol;
 }
