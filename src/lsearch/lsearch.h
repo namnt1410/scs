@@ -1,7 +1,7 @@
 #ifndef __LSEARCH_H__
 #define __LSEARCH_H__
 
-#include "sequence.h"
+#include "sequence.h"	
 
 #define LC_TYPE_SHIFT		0
 #define LC_TYPE_EXCH		1

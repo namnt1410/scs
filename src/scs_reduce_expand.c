@@ -17,8 +17,5 @@ int scs_reduce_expand(SequenceList list, int *super, int (*scs)(SequenceList , i
 
   len = expand (rlist, m, aux_seq, aux_len, super);
 
-  /*for (i = 0; i <= m; i++) free_list(&rlist[i]);
-  free(rlist);*/ 
-
   return len;
 }

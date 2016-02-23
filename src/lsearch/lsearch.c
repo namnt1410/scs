@@ -4,7 +4,9 @@
 
 #include "lsearch.h"
 
-static int loop = 0;
+#define MAX_LOOP_COUNT	50
+#define MAX_NONIMPROVED_CONTINUOUS_LOOP_COUNT	2
+
 void *temp;
 
 Solution *ls_init(SequenceList list);
@@ -77,18 +79,18 @@ Solution *lsearch (SequenceList list) {
   Solution *sol;
   SolutionNode *node;
   Sequence *seq;
-  int pos, val, change, min, better;
+  int pos, val, diff, min, changed;
   int start, end;
   int offsetmin, offsetmax;
   int offset, best_offset, best_type;
   int i, count, seqno, m = 0; 
+  int loop_count = 0, better_loop_no = 0;
 
   sol = ls_init(list);
   ls_compress (sol, 0, sol->sol_len);
 
   do {
-    loop++;
-    better = 0;
+    loop_count++; changed = 0;
     seq = list; seqno = 0;
     while(seq) {
       for (i = 0; i < seq->len; i++) {
@@ -106,9 +108,9 @@ Solution *lsearch (SequenceList list) {
 	    val = ls_localchange (sol, pos, offset, 
 				  LC_TYPE_SHIFT, &start, &end);
 	    if (val) {
-	      change = val - ls_evaluate (sol, start, end, NULL);
-	      if (change <= min) {
-		min = change;
+	      diff = val - ls_evaluate (sol, start, end, NULL);
+	      if (diff <= min) {
+		min = diff;
 		best_offset = offset;
 		best_type = LC_TYPE_SHIFT;
 	      }
@@ -122,15 +124,17 @@ Solution *lsearch (SequenceList list) {
 	  best_type == LC_TYPE_EXCH ? ls_exchange (sol, pos, best_offset) : 
 	    ls_shift (sol, pos, best_offset);
 	  ls_compress (sol, start, end);
-	  better = 1;
+          better_loop_no = min ? loop_count : better_loop_no;
+	  changed = 1;
 	}
       }
 
       seq = seq->next; seqno++;
     }
-  } while (better && loop <= 20);
+  } while (changed && loop_count < MAX_LOOP_COUNT && 
+	   loop_count < better_loop_no + MAX_NONIMPROVED_CONTINUOUS_LOOP_COUNT);
 
-  printf ("loop: %d\n", loop);
+  printf ("loop: %d\n", loop_count);
 
   return sol;
 }

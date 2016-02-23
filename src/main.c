@@ -106,8 +106,6 @@ int main(int argc, char **argv) {
 
   printf("Elapsed time: %lf ms\n", time_spent * 1000);
 
-  //free_list(&list);
-
   return 0;
 }
 
