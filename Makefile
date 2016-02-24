@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS = -g -Wall
 LIBS = -lm
-INCLUDES = -Iinclude
+INCLUDES = -include project-conf.h -Iinclude
 OBJS = objs/libfdr.a objs/sequence.o
 
 SCS_SOURCEFILES = src/main.c src/input.c src/scs_alpha.c src/scs_greedy.c src/scs_tour.c src/pair/pair.c src/scs_lsearch.c src/lsearch/lsearch.c src/scs_mmerge.c src/mmerge/*.c src/scs_reduce_expand.c src/RE/*.c
@@ -9,7 +9,7 @@ SCS_SOURCEFILES = src/main.c src/input.c src/scs_alpha.c src/scs_greedy.c src/sc
 all: scs 
 
 scs: $(OBJS)
-	$(CC) $(CFLAGS) -o scs $(SCS_SOURCEFILES) $(OBJS) $(LIBS) $(INCLUDES)
+	$(CC) $(CFLAGS) -o scs $(SCS_SOURCEFILES) $(OBJS) $(LIBS) $(INCLUDES) 
 
 clean:
 	find . -type f -name "*~" -delete

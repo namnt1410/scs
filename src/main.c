@@ -14,8 +14,6 @@ int main(int argc, char **argv) {
   int super[MAX_LEN];
   int len;
 
-  printf ("test: %d\n", TEST);
-
   if (strcmp(argv[1], "r") == 0 && argc >= 3) {
     list = readsequences(argv[2], alphabet, &alpha_len);
   } else if (strcmp(argv[1], "g") == 0 && argc >= 6) {
