@@ -6,12 +6,6 @@
 #include "mmerge/mmerge.h"
 #include "mmerge/heuristics.h"
 
-#ifdef MM_CONF_MAJORITY
-#define MM_MAJORITY MM_CONF_MAJORITY
-#else 
-#define MM_MAJORITY def_majority
-#endif
-
 int scs_mmerge(SequenceList list, int *alphabet, int alpha_len, int *super) {
   Sequence *node;
   Sequence **seq;

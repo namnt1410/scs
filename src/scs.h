@@ -5,6 +5,12 @@
 
 #define MAX_ALPHABET_SIZE	10000
 
+#ifdef MM_CONF_MAJORITY
+#define MM_MAJORITY MM_CONF_MAJORITY
+#else 
+#define MM_MAJORITY def_majority
+#endif
+
 int scs_alpha(SequenceList list, int *alphabet, int alpha_len, int *super);
 int scs_greedy(SequenceList list, int *super);
 int scs_tour(SequenceList list, int *super);
