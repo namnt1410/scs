@@ -4,9 +4,12 @@
 
 #include "scs.h"
 
-int scs_alpha(SequenceList list, int *alphabet, int alpha_len, int *super) {
+int scs_alpha(SequenceList list, int *super) {
   int i, max_len = 0;
   Sequence *seq;
+  int alphabet[MAX_ALPHABET_SIZE], alpha_len;
+
+  alpha_len = get_alphabet_set(list, alphabet); 
 
   seq = list;
   while(seq != NULL) {

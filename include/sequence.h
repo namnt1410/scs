@@ -16,6 +16,7 @@ int get_serial (int sym, int *alphabet, int alpha_len);
 int check_sequence(int *seq, int len, int *alphabet, int alpha_len);
 int check_supersequence(int *seq, int len, int *super, int super_len);
 int check_common_supersequence(SequenceList list, int *super, int super_len);
+int get_alphabet_set (SequenceList list, int *alphabet);
 
 Sequence *create_sequence(int *seq, int len);
 Sequence *add_sequence(SequenceList *list, int *seq, int len);

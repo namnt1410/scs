@@ -45,6 +45,31 @@ int check_common_supersequence(SequenceList list, int *super, int super_len) {
   return 1; 
 }
 
+int get_alphabet_set (SequenceList list, int *alphabet) {
+  Sequence *seq;
+  int alpha_len = 0;
+  int *touchtable;
+  int i;
+
+  touchtable = (int*) calloc (10000, sizeof(int));
+
+  seq = list;
+  while(seq) {
+    for (i = 0; i < seq->len; i++) {
+      if (!touchtable[seq->seq[i]]) {
+        alphabet[alpha_len++] = seq->seq[i];
+        touchtable[seq->seq[i]] = 1;
+      }
+    } 
+
+    seq =  seq->next;
+  }
+
+  free(touchtable);
+
+  return alpha_len; 
+}
+
 Sequence *create_sequence(int *seq, int len) {
   Sequence *new = (Sequence*)malloc(sizeof(Sequence));
 
