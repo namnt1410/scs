@@ -3,6 +3,7 @@
 
 #include "sequence.h"
 
+int def_majority(Sequence **, int, int *, int, int *, int **, int *);
 int mmerge(Sequence **, int, int *, int, int (*majority)(Sequence **, int, int *, int, int *, int **, int *), int *);
 
 #endif

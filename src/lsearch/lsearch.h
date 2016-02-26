@@ -3,8 +3,26 @@
 
 #include "sequence.h"	
 
+#ifdef LS_CONF_MAX_LOOP_COUNT
+#define LS_MAX_LOOP_COUNT LS_CONF_MAX_LOOP_COUNT
+#else
+#define LS_MAX_LOOP_COUNT 50
+#endif
+
+#ifdef LS_CONF_MAX_NONIMPROVED_CONTINUOUS_LOOP_COUNT
+#define LS_MAX_NONIMPROVED_CONTINUOUS_LOOP_COUNT LS_CONF_MAX_NONIMPROVED_CONTINUOUS_LOOP_COUNT
+#else
+#define LS_MAX_NONIMPROVED_CONTINUOUS_LOOP_COUNT 2
+#endif
+
 #define LC_TYPE_SHIFT		0
 #define LC_TYPE_EXCH		1
+
+#ifdef LC_CONF_TYPE
+#define LC_TYPE LC_CONF_TYPE
+#else 
+#define LC_TYPE LC_TYPE_SHIFT
+#endif 
 
 typedef struct SolutionNode SolutionNode;
 typedef struct SolutionBlock SolutionBlock;

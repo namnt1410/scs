@@ -4,6 +4,18 @@
 
 #include "mmerge.h"
 
+int def_majority(Sequence **seq, int n, int *alphabet, int alpha_len, int *count, int **index, int *wsum) {
+  int i;
+  int max = 0, maxval = -1;
+
+  for(i = 0; i < alpha_len; i++) 
+    if(count[i] > max) {
+      max = count[i]; maxval = i;
+    }
+
+  return maxval;
+}
+
 int mmerge(Sequence **seq, int n, int *alphabet, int alpha_len, int (*majority)(Sequence **, int, int *, int, int *, int **, int *), int *super) {
   int* count;
   int** index;

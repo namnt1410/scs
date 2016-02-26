@@ -6,17 +6,11 @@
 #include "mmerge/mmerge.h"
 #include "mmerge/heuristics.h"
 
-int def_majority(Sequence **seq, int n, int *alphabet, int alpha_len, int *count, int **index, int *wsum) {
-  int i;
-  int max = 0, maxval = -1;
-
-  for(i = 0; i < alpha_len; i++) 
-    if(count[i] > max) {
-      max = count[i]; maxval = i;
-    }
-
-  return maxval;
-}
+#ifdef MM_CONF_MAJORITY
+#define MM_MAJORITY MM_CONF_MAJORITY
+#else 
+#define MM_MAJORITY def_majority
+#endif
 
 int scs_mmerge(SequenceList list, int *alphabet, int alpha_len, int *super) {
   Sequence *node;
@@ -34,5 +28,5 @@ int scs_mmerge(SequenceList list, int *alphabet, int alpha_len, int *super) {
     node = node->next;
   }
 
-  return mmerge(seq, n, alphabet, alpha_len, def_majority, super);
+  return mmerge(seq, n, alphabet, alpha_len, MM_MAJORITY, super);
 }

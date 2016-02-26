@@ -92,13 +92,5 @@ int scs_greedy(SequenceList list, int *super) {
   len = seq[0]->len;
   memcpy(super, seq[0]->seq, len * sizeof(int));
 
-  /* for(i = 0; i < get_size(list); i++) {
-    free(seq[i]);
-    free(super_len[i]);
-  }
-
-  free(seq); 
-  free(super_len);*/ 
-
   return len;
 }

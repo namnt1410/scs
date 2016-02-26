@@ -4,9 +4,6 @@
 
 #include "lsearch.h"
 
-#define MAX_LOOP_COUNT	50
-#define MAX_NONIMPROVED_CONTINUOUS_LOOP_COUNT	2
-
 void *temp;
 
 Solution *ls_init(SequenceList list);
@@ -106,13 +103,13 @@ Solution *lsearch (SequenceList list) {
 	while (offset <= offsetmax) {
 	  if (offset != 0) {
 	    val = ls_localchange (sol, pos, offset, 
-				  LC_TYPE_SHIFT, &start, &end);
+				  LC_TYPE, &start, &end);
 	    if (val) {
 	      diff = val - ls_evaluate (sol, start, end, NULL);
 	      if (diff <= min) {
 		min = diff;
 		best_offset = offset;
-		best_type = LC_TYPE_SHIFT;
+		best_type = LC_TYPE;
 	      }
 	    } 
 	  }
@@ -131,8 +128,8 @@ Solution *lsearch (SequenceList list) {
 
       seq = seq->next; seqno++;
     }
-  } while (changed && loop_count < MAX_LOOP_COUNT && 
-	   loop_count < better_loop_no + MAX_NONIMPROVED_CONTINUOUS_LOOP_COUNT);
+  } while (changed && loop_count < LS_MAX_LOOP_COUNT && 
+	   loop_count < better_loop_no + LS_MAX_NONIMPROVED_CONTINUOUS_LOOP_COUNT);
 
   printf ("loop: %d\n", loop_count);
 
