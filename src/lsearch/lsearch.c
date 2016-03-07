@@ -81,7 +81,7 @@ Solution *lsearch (SequenceList list) {
   int offsetmin, offsetmax;
   int offset, best_offset, best_type;
   int i, count, seqno, m = 0; 
-  int loop_count = 0;
+  int loop_count = 0, better_loop_no = 0;
 
   sol = ls_init(list);
   ls_compress (sol, 0, sol->sol_len);
@@ -121,13 +121,15 @@ Solution *lsearch (SequenceList list) {
 	  best_type == LC_TYPE_EXCH ? ls_exchange (sol, pos, best_offset) : 
 	    ls_shift (sol, pos, best_offset);
 	  ls_compress (sol, start, end);
+          better_loop_no = min ? loop_count : better_loop_no;
 	  changed = 1;
 	}
       }
 
       seq = seq->next; seqno++;
     }
-  } while (changed && loop_count < LS_MAX_LOOP_COUNT);
+  } while (changed && loop_count < LS_MAX_LOOP_COUNT && 
+	   loop_count < better_loop_no + LS_MAX_NONIMPROVED_CONTINUOUS_LOOP_COUNT);
 
   printf ("loop: %d\n", loop_count);
 
