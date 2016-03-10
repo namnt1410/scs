@@ -31,7 +31,7 @@ int main(int argc, char **argv) {
 
   begin = clock();
 
-  len = scs_mmerge (list, super);
+  len = scs_mmerge_H0 (list, super);
   printf("mmerge: %d %d\n", len, check_common_supersequence(list, super, len));
  
   end = clock();
@@ -42,7 +42,7 @@ int main(int argc, char **argv) {
 
   begin = clock();
 
-  len = scs_deposition_reduction(list, super, scs_mmerge);
+  len = scs_deposition_reduction(list, super, scs_mmerge_H0);
   printf("DR_mmerge: %d %d\n", len, check_common_supersequence(list, super, len));
  
   end = clock();

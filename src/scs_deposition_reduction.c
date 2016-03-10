@@ -36,7 +36,7 @@ int scs_deposition_reduction(SequenceList list, int *super, int (*scs)(SequenceL
         seq = seq->next; j++;
       } 
 
-      left_len = scs_mmerge (left, temp);
+      left_len = scs_mmerge_H1 (left, temp);
       if (left_len < i) {
         better = 1;
         memcpy (temp + left_len, super + i, (len - i) * sizeof(int));

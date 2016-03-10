@@ -5,7 +5,7 @@
 #include "scs.h"
 #include "mmerge/mmerge.h"
 
-int scs_mmerge(SequenceList list, int *super) {
+int mmerge_process (SequenceList list, int *super, int (*majority)(Sequence **, int, int *, int, int *, int **, int *)) {
   Sequence *node;
   Sequence **seq;
   int n; 
@@ -23,5 +23,21 @@ int scs_mmerge(SequenceList list, int *super) {
     node = node->next;
   }
 
-  return mmerge(seq, n, alphabet, alpha_len, MM_MAJORITY, super);
+  return mmerge(seq, n, alphabet, alpha_len, majority, super);
+}
+
+int scs_mmerge_H0(SequenceList list, int *super) {
+  return mmerge_process (list, super, MM_MAJORITY_H0);
+}
+
+int scs_mmerge_H1(SequenceList list, int *super) {
+  return mmerge_process (list, super, MM_MAJORITY_H1);
+}
+
+int scs_mmerge_H2(SequenceList list, int *super) {
+  return mmerge_process (list, super, MM_MAJORITY_H2);
+}
+
+int scs_mmerge_H3(SequenceList list, int *super) {
+  return mmerge_process (list, super, MM_MAJORITY_H3);
 }
