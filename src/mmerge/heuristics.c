@@ -78,7 +78,7 @@ int heuristics_majority_H3(Sequence **seq, int n, int *alphabet, int alpha_len, 
       child_seq[j]->offset++; 
     }
 
-    super_len[i] = mmerge(child_seq, count[i], alphabet, alpha_len, heuristics_majority_H1, super);
+    super_len[i] = mmerge(child_seq, count[i], alphabet, alpha_len, MM_MAJORITY_H1, super);
     if(super_len[i] > max) {
       max = super_len[i]; maxval = i;
     }

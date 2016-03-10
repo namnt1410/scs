@@ -31,8 +31,8 @@ int main(int argc, char **argv) {
 
   begin = clock();
 
-  len = scs_alpha(list, super);
-  printf("alpha: %d %d\n", len, check_common_supersequence(list, super, len));
+  len = scs_mmerge (list, super);
+  printf("mmerge: %d %d\n", len, check_common_supersequence(list, super, len));
  
   end = clock();
 
@@ -42,8 +42,19 @@ int main(int argc, char **argv) {
 
   begin = clock();
 
-  len = scs_mmerge(list, super);
-  printf("mmerge: %d %d\n", len, check_common_supersequence(list, super, len));
+  len = scs_deposition_reduction(list, super, scs_mmerge);
+  printf("DR_mmerge: %d %d\n", len, check_common_supersequence(list, super, len));
+ 
+  end = clock();
+
+  time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
+
+  printf("Elapsed time: %lf ms\n", time_spent * 1000);
+
+  begin = clock();
+
+  len = scs_deposition_reduction(list, super, scs_lsearch);
+  printf("DR_lsearch: %d %d\n", len, check_common_supersequence(list, super, len));
  
   end = clock();
 
@@ -61,83 +72,6 @@ int main(int argc, char **argv) {
   time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
 
   printf("Elapsed time: %lf ms\n", time_spent * 1000);
-
-  begin = clock();
-
-  len = scs_tour(list, super);
-  printf("tour: %d %d\n", len, check_common_supersequence(list, super, len));
- 
-  end = clock();
-
-  time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
-
-  printf("Elapsed time: %lf ms\n", time_spent * 1000);
-
-  begin = clock();
-
-  len = scs_lsearch(list, super);
-  printf("lsearch: %d %d\n", len, check_common_supersequence(list, super, len));
- 
-  end = clock();
-
-  time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
-
-  printf("Elapsed time: %lf ms\n", time_spent * 1000);
-
-  /*begin = clock();
-
-  len = scs_reduce_expand(list, super, scs_greedy);
-  printf("reduce-greedy: %d %d\n", len, check_common_supersequence(list, super, len));
- 
-  end = clock();
-
-  time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
-
-  printf("Elapsed time: %lf ms\n", time_spent * 1000);
-
-  begin = clock();
-
-  len = scs_reduce_expand(list, super, scs_tour);
-  printf("reduce-tour: %d %d\n", len, check_common_supersequence(list, super, len));
- 
-  end = clock();
-
-  time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
-
-  printf("Elapsed time: %lf ms\n", time_spent * 1000);
-
-  begin = clock();
-
-  len = scs_reduce_expand(list, super, scs_lsearch);
-  printf("reduce-lsearch: %d %d\n", len, check_common_supersequence(list, super, len));
- 
-  end = clock();
-
-  time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
-
-  printf("Elapsed time: %lf ms\n", time_spent * 1000);
-
-  begin = clock();
-
-  len = scs_reduce_expand(list, super, scs_alpha);
-  printf("reduce-alpha: %d %d\n", len, check_common_supersequence(list, super, len));
- 
-  end = clock();
-
-  time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
-
-  printf("Elapsed time: %lf ms\n", time_spent * 1000);
-
-  begin = clock();
-
-  len = scs_reduce_expand(list, super, scs_mmerge);
-  printf("reduce-mmerge: %d %d\n", len, check_common_supersequence(list, super, len));
- 
-  end = clock();
-
-  time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
-
-  printf("Elapsed time: %lf ms\n", time_spent * 1000);*/
 
   return 0;
 }

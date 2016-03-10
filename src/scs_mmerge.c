@@ -4,7 +4,6 @@
 
 #include "scs.h"
 #include "mmerge/mmerge.h"
-#include "mmerge/heuristics.h"
 
 int scs_mmerge(SequenceList list, int *super) {
   Sequence *node;
