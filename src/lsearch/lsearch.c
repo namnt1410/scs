@@ -92,38 +92,38 @@ Solution *lsearch (SequenceList list) {
     while(seq) {
       for (i = 0; i < seq->len; i++) {
         min = 0; best_offset = 0;
-	node = sol->node_tbl[seqno][i];
+        node = sol->node_tbl[seqno][i];
         pos = node->pos;
 
-	offsetmin = i > 0 ? sol->node_tbl[seqno][i - 1]->pos - pos + 1 : -pos;
-	offsetmax = i + 1 < seq->len ? 
-	  sol->node_tbl[seqno][i + 1]->pos - pos - 1 : sol->sol_len - pos - 1;
+      	offsetmin = i > 0 ? sol->node_tbl[seqno][i - 1]->pos - pos + 1 : -pos;
+      	offsetmax = i + 1 < seq->len ? 
+      	  sol->node_tbl[seqno][i + 1]->pos - pos - 1 : sol->sol_len - pos - 1;
  
-	offset = offsetmin;
-	while (offset <= offsetmax) {
-	  if (offset != 0) {
-	    val = ls_localchange (sol, pos, offset, 
-				  LC_TYPE, &start, &end);
-	    if (val) {
-	      diff = val - ls_evaluate (sol, start, end, NULL);
-	      if (diff <= min) {
-		min = diff;
-		best_offset = offset;
-		best_type = LC_TYPE;
-	      }
-	    } 
-	  }
-	  offset++;
-	}
+      	offset = offsetmin;
+      	while (offset <= offsetmax) {
+      	  if (offset != 0) {
+      	    val = ls_localchange (sol, pos, offset, 
+      				  LC_TYPE, &start, &end);
+      	    if (val) {
+      	      diff = val - ls_evaluate (sol, start, end, NULL);
+      	      if (diff <= min) {
+                min = diff;
+                best_offset = offset;
+                best_type = LC_TYPE;
+      	      }
+      	    } 
+      	  }
+      	  offset++;
+      	}
 
-	if (best_offset) {
-	  ls_localchange (sol, pos, best_offset, best_type, &start, &end);
-	  best_type == LC_TYPE_EXCH ? ls_exchange (sol, pos, best_offset) : 
-	    ls_shift (sol, pos, best_offset);
-	  ls_compress (sol, start, end);
+      	if (best_offset) {
+      	  ls_localchange (sol, pos, best_offset, best_type, &start, &end);
+      	  best_type == LC_TYPE_EXCH ? ls_exchange (sol, pos, best_offset) : 
+      	    ls_shift (sol, pos, best_offset);
+      	  ls_compress (sol, start, end);
           better_loop_no = min ? loop_count : better_loop_no;
-	  changed = 1;
-	}
+      	  changed = 1;
+      	}
       }
 
       seq = seq->next; seqno++;
