@@ -80,7 +80,7 @@ Solution *lsearch (SequenceList list) {
   int start, end;
   int offsetmin, offsetmax;
   int offset, best_offset, best_type;
-  int i, count, seqno, m = 0; 
+  int i, seqno; 
   int loop_count = 0, better_loop_no = 0;
 
   sol = ls_init(list);

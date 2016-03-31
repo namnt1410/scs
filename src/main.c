@@ -33,6 +33,17 @@ int main(int argc, char **argv) {
 
   begin = clock();
 
+  len = scs_alpha_leftmost (list, super);
+  printf("alpha_leftmost: %d %d\n", len, check_common_supersequence(list, super, len));
+ 
+  end = clock();
+
+  time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
+
+  printf("Elapsed time: %lf ms\n", time_spent * 1000);
+
+  /*begin = clock();
+
   max_loop_count = 10;
   max_nonimproved_continous_loop_count = 3;
 
@@ -57,7 +68,7 @@ int main(int argc, char **argv) {
 
   time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
 
-  printf("Elapsed time: %lf ms\n", time_spent * 1000);
+  printf("Elapsed time: %lf ms\n", time_spent * 1000);*/
 
   begin = clock();
 

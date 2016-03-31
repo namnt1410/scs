@@ -21,30 +21,25 @@ int mmerge(Sequence **seq, int n, int *alphabet, int alpha_len, int (*majority)(
   int** index;
   int* wsum;
   int i, j, k, m; 
-  int nextval;
+  int nextval, nseq = n;
   int len = 0;
 
   index = (int**) malloc (alpha_len * sizeof(int*));
-  for(i = 0; i < alpha_len; i++) index[i] = (int*)malloc(n * sizeof(int));
+  for(i = 0; i < alpha_len; i++) index[i] = (int*) calloc (n, sizeof(int));
+  count = (int*) calloc (alpha_len, sizeof(int));
+  wsum = (int*) calloc (alpha_len, sizeof(int));
 
-  count = (int*) malloc (alpha_len * sizeof(int));
-  memset(count, 0, alpha_len * sizeof(int));
-
-  wsum = (int*) malloc (alpha_len * sizeof(int));
-  memset(wsum, 0, alpha_len * sizeof(int));
-
-  for(i = 0; i < n; i++) {
-    if(seq[i]->offset < seq[i]->len) {
+  for (i = 0; i < n; i++) {
+    if (seq[i]->offset < seq[i]->len) {
       j = get_serial (seq[i]->seq[seq[i]->offset], alphabet, alpha_len);
       index[j][count[j]] = i;
       count[j]++;
       wsum[j] += (seq[i]->len - seq[i]->offset);
-    }
+    } else nseq--;
   } 
 
-  while(1) {
+  while (nseq) {
     nextval = majority(seq, n, alphabet, alpha_len, count, index, wsum);
-    if(nextval == -1) break;
     super[len++] = alphabet[nextval];
     m = count[nextval]; 
 
@@ -55,7 +50,7 @@ int mmerge(Sequence **seq, int n, int *alphabet, int alpha_len, int (*majority)(
         k = get_serial (seq[j]->seq[seq[j]->offset], alphabet, alpha_len);
         index[k][count[k]++] = j;
         wsum[k] += (seq[j]->len - seq[j]->offset); 
-      }
+      } else nseq--;
     }
   }
      
