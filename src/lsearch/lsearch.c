@@ -103,13 +103,24 @@ Solution *lsearch (SequenceList list) {
       	while (offset <= offsetmax) {
       	  if (offset != 0) {
       	    val = ls_localchange (sol, pos, offset, 
-      				  LC_TYPE, &start, &end);
+      				  LC_TYPE_SHIFT, &start, &end);
       	    if (val) {
       	      diff = val - ls_evaluate (sol, start, end, NULL);
       	      if (diff <= min) {
                 min = diff;
                 best_offset = offset;
-                best_type = LC_TYPE;
+                best_type = LC_TYPE_SHIFT;
+      	      }
+      	    }
+
+      	    val = ls_localchange (sol, pos, offset, 
+      				  LC_TYPE_EXCH, &start, &end);
+      	    if (val) {
+      	      diff = val - ls_evaluate (sol, start, end, NULL);
+      	      if (diff <= min) {
+                min = diff;
+                best_offset = offset;
+                best_type = LC_TYPE_EXCH;
       	      }
       	    } 
       	  }
