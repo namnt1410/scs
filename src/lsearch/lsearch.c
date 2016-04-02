@@ -16,8 +16,18 @@ Solution *ls_init(SequenceList list) {
   Solution *sol;
   SolutionNode *node;
   Sequence *seq;
-  int seqno, i;
-  int count, pos;
+  int *count;
+  int **index;
+  int seqno, i, j, k, n;
+  int nseq, pos;
+  int sym, alphabet[1000], alpha_len; 
+
+  alpha_len = get_alphabet_set (list, alphabet);
+  n = get_size (list);
+
+  index = (int **) malloc (alpha_len * sizeof(int *));
+  for(i = 0; i < alpha_len; i++) index[i] = (int *) calloc(n, sizeof(int));
+  count = (int *) calloc (alpha_len, sizeof(int));
 
   sol = (Solution *) malloc (sizeof(Solution));
   sol->seqs = get_size(list); 
@@ -53,21 +63,30 @@ Solution *ls_init(SequenceList list) {
 
   pos = 0; i = 0;
   do {
-    count = 0;
+    nseq = 0;
     seq = list; seqno = 0;
+    memset (count, 0, alpha_len * sizeof(int));
+    
     while (seq) {
       if (i < seq->len) {
-        count++;
-        node = sol->node_tbl[seqno][i];
-        node->pos = pos++;
-        sol->sol[node->pos] = node;
+        nseq++;
+        sym = seq->seq[i];
+        j = get_serial (sym, alphabet, alpha_len);
+        index[j][count[j]++] = seqno;
       }
 
       seq = seq->next; seqno++;
     }
 
+    for (j = 0; j < alpha_len; j++)
+      for (k = 0; k < count[j]; k++) {
+        node = sol->node_tbl[index[j][k]][i];
+        node->pos = pos++;
+        sol->sol[node->pos] = node;
+      }
+
     i++;
-  } while (count); 
+  } while (nseq); 
 
   return sol;
 }
@@ -113,7 +132,7 @@ Solution *lsearch (SequenceList list) {
       	      }
       	    }
 
-      	    val = ls_localchange (sol, pos, offset, 
+      	    /*val = ls_localchange (sol, pos, offset, 
       				  LC_TYPE_EXCH, &start, &end);
       	    if (val) {
       	      diff = val - ls_evaluate (sol, start, end, NULL);
@@ -122,7 +141,7 @@ Solution *lsearch (SequenceList list) {
                 best_offset = offset;
                 best_type = LC_TYPE_EXCH;
       	      }
-      	    } 
+      	    }*/ 
       	  }
       	  offset++;
       	}
