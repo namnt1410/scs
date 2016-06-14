@@ -42,13 +42,16 @@ int main(int argc, char **argv) {
 
   printf("Elapsed time: %lf ms\n", time_spent * 1000);
 
-  /*begin = clock();
+  begin = clock();
 
   max_loop_count = 10;
   max_nonimproved_continous_loop_count = 3;
 
   len = scs_lsearch (list, super);
   printf("lsearch: %d %d\n", len, check_common_supersequence(list, super, len));
+  /*for (i = 0; i < len; i++) {
+    printf ("%c\n", super[i]);
+  }*/
  
   end = clock();
 
@@ -58,8 +61,8 @@ int main(int argc, char **argv) {
 
   begin = clock();
 
-  max_loop_count = 40;
-  max_nonimproved_continous_loop_count = 5;
+  max_loop_count = 200;
+  max_nonimproved_continous_loop_count = 100;
 
   len = scs_lsearch (list, super);
   printf("lsearch: %d %d\n", len, check_common_supersequence(list, super, len));
@@ -68,7 +71,7 @@ int main(int argc, char **argv) {
 
   time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
 
-  printf("Elapsed time: %lf ms\n", time_spent * 1000);*/
+  printf("Elapsed time: %lf ms\n", time_spent * 1000);
 
   begin = clock();
 

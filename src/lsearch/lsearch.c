@@ -12,7 +12,7 @@ int ls_localchange (Solution *sol, int pos, int offset, int lc_type, int *start,
 int ls_shift (Solution *sol, int pos, int offset);
 int ls_exchange (Solution *sol, int pos, int offset);
 
-Solution *ls_init(SequenceList list) {
+/*Solution *ls_init(SequenceList list) {
   Solution *sol;
   SolutionNode *node;
   Sequence *seq;
@@ -87,6 +87,103 @@ Solution *ls_init(SequenceList list) {
 
     i++;
   } while (nseq); 
+
+  return sol;
+}*/
+
+Solution *ls_init(SequenceList list) {
+  Solution *sol;
+  SolutionNode *node;
+  Sequence **seq, *sptr;
+  int *count;
+  int **index;
+  int *wsum;
+  int i, j, k, m, n;
+  int nseq, pos, max, nextval;
+  int alphabet[1000], alpha_len; 
+
+  alpha_len = get_alphabet_set (list, alphabet);
+  n = get_size (list);
+
+  index = (int **) malloc (alpha_len * sizeof(int *));
+  for(i = 0; i < alpha_len; i++) index[i] = (int *) calloc(n, sizeof(int));
+  count = (int *) calloc (alpha_len, sizeof(int));
+  wsum = (int*) calloc (alpha_len, sizeof(int));
+
+  seq = (Sequence**) malloc (n * sizeof(Sequence*));
+
+  sptr = list; i = 0; 
+  while(sptr) {
+    seq[i++] = create_sequence (sptr->seq, sptr->len);
+    sptr = sptr->next;
+  }
+
+  sol = (Solution *) malloc (sizeof(Solution));
+  sol->seqs = get_size(list); 
+  sol->node_tbl = 
+    (SolutionNode ***) malloc (sizeof(SolutionNode **) * sol->seqs);
+
+  sol->sol_len = 0; sptr = list;
+  for(i = 0; i < n; i++) {
+    sol->sol_len += sptr->len;
+    sol->node_tbl[i] = (SolutionNode **) malloc (sizeof(SolutionNode *) * sptr->len);
+    for(j = 0; j < sptr->len; j++) {
+      node  = (SolutionNode *) malloc (sizeof(SolutionNode));
+      sol->node_tbl[i][j] = node;
+ 
+      node->seqno = i;
+      node->index = j;
+      node->seq = sptr;
+      node->block = NULL;
+    }
+
+    sptr = sptr->next; 
+  } 
+
+  sol->sol = (SolutionNode **) malloc (sizeof(SolutionNode *) * sol->sol_len);
+  temp = malloc (sol->sol_len * sizeof(SolutionNode*));
+
+  sol->block_tbl = 
+    (SolutionBlock **) malloc (sol->sol_len * sizeof(SolutionBlock *));
+  for (i = 0; i < sol->sol_len; i++) 
+    sol->block_tbl[i] = (SolutionBlock *) malloc (sizeof(SolutionBlock));
+
+  nseq = n;
+
+  for (i = 0; i < n; i++) {
+    if (seq[i]->offset < seq[i]->len) {
+      j = get_serial (seq[i]->seq[seq[i]->offset], alphabet, alpha_len);
+      index[j][count[j]] = i;
+      count[j]++;
+      wsum[j] += (seq[i]->len - seq[i]->offset);
+    } else nseq--;
+  } 
+
+  pos = 0;
+  while(nseq) { 
+    max = 0, nextval = -1;
+
+    for(i = 0; i < alpha_len; i++) 
+      if(wsum[i] > max) {
+        max = wsum[i]; nextval = i;
+      }
+    
+    m = count[nextval]; 
+
+    count[nextval] = 0; wsum[nextval] = 0;
+    for(i = 0; i < m; i++) {
+      j = index[nextval][i];
+      node = sol->node_tbl[j][seq[j]->offset];
+      node->pos = pos++;
+      sol->sol[node->pos] = node;
+      
+      if(++seq[j]->offset < seq[j]->len) {
+        k = get_serial (seq[j]->seq[seq[j]->offset], alphabet, alpha_len);
+        index[k][count[k]++] = j;
+        wsum[k] += (seq[j]->len - seq[j]->offset); 
+      } else nseq--;
+    }
+  }
 
   return sol;
 }
