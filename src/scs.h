@@ -5,6 +5,7 @@
 
 #define MAX_ALPHABET_SIZE	10000
 
+int scs_graph(SequenceList list, int *super);
 int scs_alpha(SequenceList list, int *super);
 int scs_alpha_leftmost(SequenceList list, int *super);
 int scs_greedy(SequenceList list, int *super);

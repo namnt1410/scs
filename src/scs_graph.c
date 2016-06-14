@@ -58,7 +58,7 @@ int scs_graph(SequenceList list, int *super) {
   }
 
   for (i = 0; i < len/2; i++) {
-    temp = seq[i]; seq[i] = seq[len - i - 1]; seq[len - i - 1] = temp;
+    temp = super[i]; super[i] = super[len - i - 1]; super[len - i - 1] = temp;
   }
 
   free(tup);
